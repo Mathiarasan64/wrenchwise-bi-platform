@@ -46,6 +46,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 const BRAND_CHART_COLORS = ['#0B9BC5', '#08C565', '#F59E0B', '#DC2626', '#94A3B8', '#0284C7', '#059669', '#D97706'];
 
 export const ExecutiveChartsSection: React.FC<ExecutiveChartsSectionProps> = ({ execStats }) => {
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Sort data for charts
   const revenueData = [...execStats].sort((a, b) => b.totalSalesValue - a.totalSalesValue);
   const collectionPctData = [...execStats].sort((a, b) => b.collectionPercentage - a.collectionPercentage);
@@ -62,6 +68,27 @@ export const ExecutiveChartsSection: React.FC<ExecutiveChartsSectionProps> = ({ 
       value: e.totalSalesValue,
       percentage: totalRev > 0 ? (e.totalSalesValue / totalRev) * 100 : 0,
     }));
+
+  if (!isMounted) {
+    return (
+      <div className="space-y-6">
+        <SectionHeader
+          icon={<BarChart3 className="w-5 h-5 text-[#08C565]" />}
+          title="Executive Performance Charts"
+          subtitle="Six visual analytics breakdowns comparing sales value, collections, active learners, and conversion rates across representatives"
+          badgeText="Executive Charts"
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="ww-card p-5 h-80 flex items-center justify-center text-xs font-medium text-[#6B7280]">
+              Loading executive chart...
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="space-y-6">

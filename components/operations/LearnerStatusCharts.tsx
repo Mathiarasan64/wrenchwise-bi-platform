@@ -32,6 +32,12 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const LearnerStatusCharts: React.FC<LearnerStatusChartsProps> = ({ records }) => {
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   let active = 0;
   let onboardedNotActive = 0;
   let hold = 0;
@@ -53,6 +59,23 @@ export const LearnerStatusCharts: React.FC<LearnerStatusChartsProps> = ({ record
     { name: 'Not On-boarded', value: notOnboarded, color: '#2563EB' },
     { name: 'Dropped Learners', value: dropped, color: '#DC2626' },
   ];
+
+  if (!isMounted) {
+    return (
+      <div className="space-y-4">
+        <SectionHeader
+          icon={<Users className="w-5 h-5 text-[#08C565]" />}
+          title="Learner Status Analysis"
+          subtitle="Distribution across active training, pending batch launches, hold status, and discontinued candidates"
+          badgeText="Learner Analytics"
+        />
+        <div className="ww-card p-5 h-80 flex items-center justify-center text-xs font-medium text-[#6B7280]">
+          Loading status chart...
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="space-y-4">

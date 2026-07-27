@@ -133,7 +133,7 @@ export default function AboutDashboardPage() {
             <Clock className="w-4 h-4 text-amber-600" />
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Last Sync</span>
           </div>
-          <div className="text-xl font-black text-amber-600">{formatRelativeTime(lastSync)}</div>
+          <div className="text-xl font-black text-amber-600" suppressHydrationWarning>{formatRelativeTime(lastSync)}</div>
           <div className="text-[11px] text-slate-500 font-medium mt-1">
             {lastSync ? formatDateTime(lastSync) : 'Not synced yet'}
           </div>

@@ -44,6 +44,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export const PendingCollectionCharts: React.FC<PendingCollectionChartsProps> = ({ records }) => {
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const aggregated = aggregateExecutiveStats(records);
 
   const pendingByExecData = [...aggregated].sort((a, b) => b.pendingAmount - a.pendingAmount);
@@ -62,6 +68,27 @@ export const PendingCollectionCharts: React.FC<PendingCollectionChartsProps> = (
     { name: 'Dropped Revenue Loss', value: totalDroppedVal, color: '#DC2626' },
     { name: 'Pending Balance', value: totalPending, color: '#F59E0B' },
   ];
+
+  if (!isMounted) {
+    return (
+      <div className="space-y-6">
+        <SectionHeader
+          icon={<Wallet className="w-5 h-5 text-[#08C565]" />}
+          title="Pending Collection Analysis"
+          subtitle="Operational collection visual breakdown across sales representatives and deal risk profiles"
+          badgeText="Collection Analytics"
+        />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="ww-card p-5 h-80 flex items-center justify-center text-xs font-medium text-[#6B7280]">
+              Loading collection chart...
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <div className="space-y-6">

@@ -94,7 +94,7 @@ export default function ExecutiveDashboard() {
               <p className="text-sm text-[#6B7280] font-normal leading-[1.6] mt-0.5">
                 Real-time business performance powered by live Zoho Sheet data
                 <span className="text-[#9CA3AF] mx-1.5">•</span>
-                <span className="text-[#6B7280] font-mono text-xs">Synced {formatRelativeTime(lastSync)}</span>
+                <span className="text-[#6B7280] font-mono text-xs" suppressHydrationWarning>Synced {formatRelativeTime(lastSync)}</span>
               </p>
             </div>
             <BusinessVerticalBadge />

@@ -107,7 +107,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileNav }) => {
                 {isLoading ? 'Syncing...' : error ? 'Disconnected' : 'Live Zoho Connected'}
               </span>
               <span className="text-[#9CA3AF]">•</span>
-              <span className="text-[#6B7280] font-mono font-medium">{syncTimeLabel}</span>
+              <span className="text-[#6B7280] font-mono font-medium" suppressHydrationWarning>{syncTimeLabel}</span>
             </div>
 
             {/* Primary Green Button (#08C565) */}

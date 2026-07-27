@@ -28,6 +28,9 @@ function loadFromLocalStorage(): ZohoFetchResult | null {
     if (!raw) return null;
     const { result, ts } = JSON.parse(raw);
     if (Date.now() - ts > LS_TTL_MS) return null; // expired
+    if (result && result.lastSync) {
+      result.lastSync = new Date(result.lastSync);
+    }
     return result as ZohoFetchResult;
   } catch {
     return null;

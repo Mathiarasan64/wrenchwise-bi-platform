@@ -76,7 +76,8 @@ const ChartCard: React.FC<{
   title: string;
   subtitle: string;
   children: React.ReactNode;
-}> = ({ icon, title, subtitle, children }) => (
+  isMounted?: boolean;
+}> = ({ icon, title, subtitle, children, isMounted = true }) => (
   <div className="bg-white border border-[#E5E7EB] rounded-[16px] p-5 shadow-xs hover-lift flex flex-col">
     <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] mb-4">
       <div className="flex items-center gap-2.5">
@@ -87,11 +88,23 @@ const ChartCard: React.FC<{
         </div>
       </div>
     </div>
-    {children}
+    {isMounted ? (
+      children
+    ) : (
+      <div className="h-64 w-full bg-[#F8FAFC] border border-[#E5E7EB] rounded-xl flex items-center justify-center text-xs font-medium text-[#6B7280]">
+        Loading analytics chart...
+      </div>
+    )}
   </div>
 );
 
 export const ChartsSection: React.FC<ChartsSectionProps> = memo(function ChartsSection({ records }) {
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const { revenueOverviewData, collectionData, learnerStatusData, executivePerformanceData } =
     prepareChartData(records);
 
@@ -111,6 +124,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = memo(function ChartsS
     color: d.name === 'Active' ? CHART_COLORS.collection : d.name === 'Hold' ? CHART_COLORS.pending : d.name === 'Dropped' ? CHART_COLORS.dropped : CHART_COLORS.revenue,
   }));
 
+
   return (
     <div className="space-y-6">
       <SectionHeader
@@ -126,6 +140,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = memo(function ChartsS
           icon={<BarChart3 className="w-4 h-4" />}
           title="Revenue Overview"
           subtitle="Original vs Active vs Dropped Sales Value"
+          isMounted={isMounted}
         >
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -163,6 +178,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = memo(function ChartsS
           icon={<Wallet className="w-4 h-4" />}
           title="Collection Overview"
           subtitle="Collected vs Outstanding Pending Amount"
+          isMounted={isMounted}
         >
           <div className="h-64 w-full flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -198,6 +214,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = memo(function ChartsS
           icon={<PieChartIcon className="w-4 h-4" />}
           title="Learner Status Distribution"
           subtitle="Status breakdown across active, hold & dropped"
+          isMounted={isMounted}
         >
           <div className="h-64 w-full flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
@@ -230,6 +247,7 @@ export const ChartsSection: React.FC<ChartsSectionProps> = memo(function ChartsS
           icon={<UserCheck className="w-4 h-4" />}
           title="Sales Executive Performance"
           subtitle="Total contracted sales value per executive"
+          isMounted={isMounted}
         >
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
