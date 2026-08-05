@@ -5,7 +5,7 @@
 /* ─── Base Layer ─── */
 @layer base {
   body {
-    @apply bg-[#F8FAFC] text-[#374151] antialiased font-sans selection:bg-[#08C565] selection:text-white min-h-screen flex flex-col tracking-normal text-[15px] font-medium leading-[1.6];
+    @apply bg-[#F8FAFC] text-[#374151] antialiased font-sans selection:bg-[#08C565] selection:text-white min-h-screen flex flex-col tracking-normal text-[15px] font-medium leading-[1.6] overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {

@@ -1,17 +1,11 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { useZohoData } from '@/context/DataContext';
-import { calculateOperationsOverview, getOperationsPriorityQueue } from '@/lib/operationsMetrics';
-import { aggregateExecutiveStats } from '@/lib/salesExecutiveMetrics';
 import { FilterBar } from '@/components/filters/FilterBar';
 import { OperationsKPIGrid } from '@/components/operations/OperationsKPIGrid';
-import { OperationsPriorityQueue } from '@/components/operations/OperationsPriorityQueue';
-import { FollowupDashboardCards } from '@/components/operations/FollowupDashboardCards';
-import { PendingCollectionCharts } from '@/components/operations/PendingCollectionCharts';
-import { LearnerStatusCharts } from '@/components/operations/LearnerStatusCharts';
+import { OperationsChartsSection } from '@/components/operations/OperationsChartsSection';
 import { OperationsWorkQueueTable } from '@/components/operations/OperationsWorkQueueTable';
-import { OperationsSmartAlerts } from '@/components/operations/OperationsSmartAlerts';
 import { ErrorAlert } from '@/components/common/ErrorAlert';
 import { PageSkeleton } from '@/components/common/LoadingSkeleton';
 import { BusinessVerticalBadge } from '@/components/common/BusinessVerticalBadge';
@@ -20,14 +14,6 @@ import { Wrench } from 'lucide-react';
 
 export default function OperationsPage() {
   const { filteredRecords, isLoading, error, refetchData } = useZohoData();
-  const [activeCategoryFilter, setActiveCategoryFilter] = useState<string | null>(null);
-
-  // Calculate Overview Metrics
-  const overviewMetrics = useMemo(() => calculateOperationsOverview(filteredRecords), [filteredRecords]);
-
-  // Aggregate Exec Stats & Priority Queue
-  const execStats = useMemo(() => aggregateExecutiveStats(filteredRecords), [filteredRecords]);
-  const priorityQueueItems = useMemo(() => getOperationsPriorityQueue(execStats), [execStats]);
 
   if (isLoading && filteredRecords.length === 0) {
     return <PageSkeleton />;
@@ -46,7 +32,7 @@ export default function OperationsPage() {
           </h1>
           <BusinessVerticalBadge />
           <p className="text-[14px] text-[#4B5563] font-normal leading-[1.6] mt-1">
-            Real-time operations management, pending collection follow-up, candidate hold tracking, and task priorities
+            Real-time operations management, learner health distribution, pending collection follow-up, and master work queue
           </p>
         </div>
 
@@ -66,33 +52,14 @@ export default function OperationsPage() {
         <EmptyVerticalState />
       ) : (
         <>
-          {/* 1. Operations Overview KPIs */}
-          <OperationsKPIGrid metrics={overviewMetrics} />
+          {/* 1. Operations Overview KPIs (6 Cards Only) */}
+          <OperationsKPIGrid records={filteredRecords} />
 
-          {/* 2. Operations Priority Queue */}
-          <OperationsPriorityQueue items={priorityQueueItems} />
+          {/* 2. Three Important Charts */}
+          <OperationsChartsSection records={filteredRecords} />
 
-          {/* 3. Follow-up Dashboard Interactive Cards */}
-          <FollowupDashboardCards
-            records={filteredRecords}
-            activeCategory={activeCategoryFilter}
-            onSelectCategory={(cat) => setActiveCategoryFilter(cat)}
-          />
-
-          {/* 4. Pending Collection Analysis Charts */}
-          <PendingCollectionCharts records={filteredRecords} />
-
-          {/* 5. Learner Status Analysis Charts */}
-          <LearnerStatusCharts records={filteredRecords} />
-
-          {/* 6. Operations Work Queue Master Table */}
-          <OperationsWorkQueueTable
-            records={filteredRecords}
-            activeCategoryFilter={activeCategoryFilter}
-          />
-
-          {/* 7. Smart Alerts & Operational Recommendations */}
-          <OperationsSmartAlerts records={filteredRecords} />
+          {/* 3. Operations Work Queue Master Table */}
+          <OperationsWorkQueueTable records={filteredRecords} />
         </>
       )}
     </div>

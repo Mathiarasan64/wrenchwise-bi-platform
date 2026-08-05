@@ -26,7 +26,7 @@ export interface RootCauseItem {
   rootCause: string;
   supportingData: string;
   recommendation: string;
-  targetModule: '/revenue' | '/operations' | '/sales-executive' | '/learners';
+  targetModule: '/revenue' | '/operations' | '/sales-executive';
 }
 
 export interface ExecutiveAlertItem {
@@ -35,7 +35,7 @@ export interface ExecutiveAlertItem {
   severity: 'Critical' | 'High' | 'Medium' | 'Low';
   impactText: string;
   suggestedAction: string;
-  targetModule: '/revenue' | '/operations' | '/sales-executive' | '/learners';
+  targetModule: '/revenue' | '/operations' | '/sales-executive';
 }
 
 export interface SimulationResult {
@@ -221,7 +221,7 @@ export function generateRootCauseAnalysis(records: ZohoRecord[]): RootCauseItem[
         1
       )}% of total enrolled learners.`,
       recommendation: 'Implement pre-onboarding orientation sessions and mid-course retention reviews.',
-      targetModule: '/learners',
+      targetModule: '/sales-executive',
     },
     {
       id: 'rc-4',
@@ -260,7 +260,7 @@ export function generateExecutiveAlerts(records: ZohoRecord[]): ExecutiveAlertIt
         0
       )} candidate cancellations.`,
       suggestedAction: 'Conduct exit interviews and offer flexible installment restructuring.',
-      targetModule: '/learners',
+      targetModule: '/sales-executive',
     },
     {
       id: 'alt-3',

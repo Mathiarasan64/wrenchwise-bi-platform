@@ -37,8 +37,8 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
           badgeText="Financial Metrics"
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className={getStaggerClass(0)}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className={`${getStaggerClass(0)} h-full`}>
             <KPICard
               title="Original Sales Value"
               value={formatCurrency(kpis.originalSalesValue)}
@@ -52,7 +52,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(1)}>
+          <div className={`${getStaggerClass(1)} h-full`}>
             <KPICard
               title="Total Sales Value"
               value={formatCurrency(kpis.totalSalesValue)}
@@ -66,7 +66,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(2)}>
+          <div className={`${getStaggerClass(2)} h-full`}>
             <KPICard
               title="Active Sales Value"
               value={formatCurrency(kpis.activeSalesValue)}
@@ -80,7 +80,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(3)}>
+          <div className={`${getStaggerClass(3)} h-full`}>
             <KPICard
               title="Dropped Value"
               value={formatCurrency(kpis.droppedValue)}
@@ -94,7 +94,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(4)}>
+          <div className={`${getStaggerClass(4)} h-full`}>
             <KPICard
               title="Amount Collected"
               value={formatCurrency(kpis.amountCollected)}
@@ -108,7 +108,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(5)}>
+          <div className={`${getStaggerClass(5)} h-full`}>
             <KPICard
               title="Pending Amount"
               value={formatCurrency(kpis.pendingAmount)}
@@ -122,7 +122,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(6)}>
+          <div className={`${getStaggerClass(6)} h-full`}>
             <KPICard
               title="Collection %"
               value={formatPercent(kpis.collectionPercentage)}
@@ -151,8 +151,8 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
           badgeText="Student Metrics"
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className={getStaggerClass(0)}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className={`${getStaggerClass(0)} h-full`}>
             <KPICard
               title="Total Learners"
               value={formatCount(kpis.totalLearners)}
@@ -166,7 +166,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(1)}>
+          <div className={`${getStaggerClass(1)} h-full`}>
             <KPICard
               title="Active Learners"
               value={formatCount(kpis.activeLearners)}
@@ -180,7 +180,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(2)}>
+          <div className={`${getStaggerClass(2)} h-full`}>
             <KPICard
               title="Onboarded - Not Active"
               value={formatCount(kpis.onboardedNotActive)}
@@ -194,7 +194,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(3)}>
+          <div className={`${getStaggerClass(3)} h-full`}>
             <KPICard
               title="Hold"
               value={formatCount(kpis.holdLearners)}
@@ -208,7 +208,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(4)}>
+          <div className={`${getStaggerClass(4)} h-full`}>
             <KPICard
               title="Not On-boarded"
               value={formatCount(kpis.notOnboarded)}
@@ -222,7 +222,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(5)}>
+          <div className={`${getStaggerClass(5)} h-full`}>
             <KPICard
               title="Dropped"
               value={formatCount(kpis.droppedLearners)}
@@ -236,7 +236,7 @@ export const KPIGrid: React.FC<KPIGridProps> = ({ kpis }) => {
             />
           </div>
 
-          <div className={getStaggerClass(6)}>
+          <div className={`${getStaggerClass(6)} h-full`}>
             <KPICard
               title="Conversion Rate"
               value={formatPercent(kpis.avgConversionRate)}

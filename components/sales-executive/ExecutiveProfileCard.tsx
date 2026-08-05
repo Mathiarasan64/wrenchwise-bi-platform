@@ -61,60 +61,97 @@ export const ExecutiveProfileCard: React.FC<ExecutiveProfileCardProps> = ({ stat
         </div>
       </div>
 
-      {/* Grid of Key Performance Values */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-4 rounded-xl">
-          <div className="text-xs font-semibold text-[#6B7280] flex items-center gap-1.5">
-            <Users className="w-4 h-4 text-[#0B9BC5]" />
-            Total Candidates
-          </div>
-          <div className="text-lg font-bold text-[#111827] mt-1 font-mono">{stats.totalLearners}</div>
-          <div className="text-xs text-[#4B5563] mt-0.5 font-normal">{stats.activeLearners} Active Learners</div>
+      {/* Grid of All 13 Key Performance Values */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-4">
+        {/* 1. Total Learners */}
+        <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#6B7280]">Total Learners</div>
+          <div className="text-base sm:text-lg font-bold text-[#111827] mt-1 font-mono">{stats.totalLearners}</div>
+          <div className="text-[11px] text-[#4B5563] mt-0.5">Assigned candidates</div>
         </div>
 
-        <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-4 rounded-xl">
-          <div className="text-xs font-semibold text-[#6B7280] flex items-center gap-1.5">
-            <DollarSign className="w-4 h-4 text-[#0B9BC5]" />
-            Total Sales Value
-          </div>
-          <div className="text-lg font-bold text-[#0B9BC5] mt-1 font-mono">{formatCurrency(stats.totalSalesValue)}</div>
-          <div className="text-xs text-[#4B5563] mt-0.5 font-normal">Contracted sales value</div>
+        {/* 2. Active Learners */}
+        <div className="bg-[#DCFCE7] border border-emerald-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#166534]">Active Learners</div>
+          <div className="text-base sm:text-lg font-bold text-[#08C565] mt-1 font-mono">{stats.activeLearners}</div>
+          <div className="text-[11px] text-[#166534] mt-0.5">Active in training</div>
         </div>
 
-        <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-4 rounded-xl">
-          <div className="text-xs font-semibold text-[#6B7280] flex items-center gap-1.5">
-            <Wallet className="w-4 h-4 text-[#08C565]" />
-            Amount Collected
-          </div>
-          <div className="text-lg font-bold text-[#08C565] mt-1 font-mono">{formatCurrency(stats.amountCollected)}</div>
-          <div className="text-xs text-[#4B5563] mt-0.5 font-normal">Realized cash in hand</div>
+        {/* 3. Onboarded - Not Active */}
+        <div className="bg-[#FEF3C7] border border-amber-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#92400E]">Onboarded - Not Active</div>
+          <div className="text-base sm:text-lg font-bold text-[#F59E0B] mt-1 font-mono">{stats.onboardedNotActive}</div>
+          <div className="text-[11px] text-[#92400E] mt-0.5">Pending session start</div>
         </div>
 
-        <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-4 rounded-xl">
-          <div className="text-xs font-semibold text-[#6B7280] flex items-center gap-1.5">
-            <Clock className="w-4 h-4 text-[#F59E0B]" />
-            Pending Balance
-          </div>
-          <div className="text-lg font-bold text-[#F59E0B] mt-1 font-mono">{formatCurrency(stats.pendingAmount)}</div>
-          <div className="text-xs text-[#4B5563] mt-0.5 font-normal">Outstanding receivables</div>
+        {/* 4. Hold */}
+        <div className="bg-[#FEF3C7] border border-amber-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#92400E]">Hold</div>
+          <div className="text-base sm:text-lg font-bold text-[#F59E0B] mt-1 font-mono">{stats.hold}</div>
+          <div className="text-[11px] text-[#92400E] mt-0.5">Temporarily paused</div>
         </div>
 
-        <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-4 rounded-xl">
-          <div className="text-xs font-semibold text-[#6B7280] flex items-center gap-1.5">
-            <Percent className="w-4 h-4 text-[#0B9BC5]" />
-            Collection %
-          </div>
-          <div className="text-lg font-bold text-[#0B9BC5] mt-1 font-mono">{formatPercent(stats.collectionPercentage)}</div>
-          <div className="text-xs text-[#4B5563] mt-0.5 font-normal">Realized cash ratio</div>
+        {/* 5. Not On-boarded */}
+        <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#6B7280]">Not On-boarded</div>
+          <div className="text-base sm:text-lg font-bold text-[#374151] mt-1 font-mono">{stats.notOnboarded}</div>
+          <div className="text-[11px] text-[#6B7280] mt-0.5">Enrolment pending</div>
         </div>
 
-        <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-4 rounded-xl">
-          <div className="text-xs font-semibold text-[#6B7280] flex items-center gap-1.5">
-            <Award className="w-4 h-4 text-[#08C565]" />
-            Conversion Rate
-          </div>
-          <div className="text-lg font-bold text-[#08C565] mt-1 font-mono">{formatPercent(stats.conversionRate)}</div>
-          <div className="text-xs text-[#4B5563] mt-0.5 font-normal">Active candidate ratio</div>
+        {/* 6. Dropped */}
+        <div className="bg-[#FEE2E2] border border-red-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#991B1B]">Dropped</div>
+          <div className="text-base sm:text-lg font-bold text-[#DC2626] mt-1 font-mono">{stats.dropped}</div>
+          <div className="text-[11px] text-[#991B1B] mt-0.5">Cancelled candidate</div>
+        </div>
+
+        {/* 7. Original Sales Value */}
+        <div className="bg-[#F8FAFC] border border-[#E5E7EB] p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#6B7280]">Original Sales Value</div>
+          <div className="text-base sm:text-lg font-bold text-[#111827] mt-1 font-mono truncate">{formatCurrency(stats.originalSalesValue)}</div>
+          <div className="text-[11px] text-[#6B7280] mt-0.5">Quotation baseline</div>
+        </div>
+
+        {/* 8. Total Sales Value */}
+        <div className="bg-[#DBEAFE] border border-sky-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#1E40AF]">Total Sales Value</div>
+          <div className="text-base sm:text-lg font-bold text-[#0B9BC5] mt-1 font-mono truncate">{formatCurrency(stats.totalSalesValue)}</div>
+          <div className="text-[11px] text-[#1E40AF] mt-0.5">Contracted revenue</div>
+        </div>
+
+        {/* 9. Active Sales Value */}
+        <div className="bg-[#DCFCE7] border border-emerald-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#166534]">Active Sales Value</div>
+          <div className="text-base sm:text-lg font-bold text-[#08C565] mt-1 font-mono truncate">{formatCurrency(stats.activeSalesValue)}</div>
+          <div className="text-[11px] text-[#166534] mt-0.5">Active deal value</div>
+        </div>
+
+        {/* 10. Dropped Value */}
+        <div className="bg-[#FEE2E2] border border-red-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#991B1B]">Dropped Value</div>
+          <div className="text-base sm:text-lg font-bold text-[#DC2626] mt-1 font-mono truncate">{formatCurrency(stats.droppedValue)}</div>
+          <div className="text-[11px] text-[#991B1B] mt-0.5">Lost contract value</div>
+        </div>
+
+        {/* 11. Amount Collected */}
+        <div className="bg-[#DCFCE7] border border-emerald-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#166534]">Amount Collected</div>
+          <div className="text-base sm:text-lg font-bold text-[#08C565] mt-1 font-mono truncate">{formatCurrency(stats.amountCollected)}</div>
+          <div className="text-[11px] text-[#166534] mt-0.5">Realized cash in hand</div>
+        </div>
+
+        {/* 12. Pending Amount */}
+        <div className="bg-[#FEF3C7] border border-amber-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#92400E]">Pending Amount</div>
+          <div className="text-base sm:text-lg font-bold text-[#F59E0B] mt-1 font-mono truncate">{formatCurrency(stats.pendingAmount)}</div>
+          <div className="text-[11px] text-[#92400E] mt-0.5">Outstanding balance</div>
+        </div>
+
+        {/* 13. Collection % */}
+        <div className="bg-[#DBEAFE] border border-sky-200 p-3.5 rounded-xl">
+          <div className="text-xs font-semibold text-[#1E40AF]">Collection %</div>
+          <div className="text-base sm:text-lg font-bold text-[#0B9BC5] mt-1 font-mono">{formatPercent(stats.collectionPercentage)}</div>
+          <div className="text-[11px] text-[#1E40AF] mt-0.5">Realized cash ratio</div>
         </div>
       </div>
 

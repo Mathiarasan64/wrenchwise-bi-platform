@@ -20,17 +20,11 @@ export const Footer: React.FC = () => {
           </span>
         </div>
 
-        {/* Center: Data Source */}
+        {/* Center: Record Volume */}
         <div className="flex items-center gap-2 text-slate-500">
           <Database className="w-3.5 h-3.5 text-[#0B9BC5]" />
           <span>
-            Data Source:{' '}
-            <strong className={error ? 'text-rose-600 font-bold' : 'text-[#08C565] font-bold'}>
-              {error ? 'Disconnected' : 'Live Zoho Sheet CSV'}
-            </strong>
-          </span>
-          <span className="text-slate-300">•</span>
-          <span>
+            Operational Dataset:{' '}
             <strong className="text-[#0B9BC5] font-bold">{formatCount(records.length)}</strong> Records
           </span>
         </div>

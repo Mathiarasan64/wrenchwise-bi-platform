@@ -31,7 +31,7 @@ export const AIBusinessInsightsGrid: React.FC<AIBusinessInsightsGridProps> = ({ 
     <div className="space-y-4">
       <SectionHeader
         icon={<Lightbulb className="w-5 h-5 text-[#08C565]" />}
-        title="AI Executive Signals & Business Insights"
+        title="AI Executive Signals & Performance Drivers"
         subtitle="Automated intelligence cards pinpointing sales leaders, operational risks, and collection priorities"
         badgeText="AI Signals"
       />

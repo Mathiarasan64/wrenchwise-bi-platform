@@ -5,6 +5,7 @@ interface SectionHeaderProps {
   title: string;
   subtitle: string;
   badgeText?: string;
+  action?: React.ReactNode;
   accentColor?: 'green' | 'blue' | 'indigo' | 'emerald' | 'amber' | 'purple' | 'sky';
 }
 
@@ -13,9 +14,10 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   title,
   subtitle,
   badgeText,
+  action,
 }) => {
   return (
-    <div className="flex items-center justify-between gap-4 mb-4 pb-3 border-b border-[#E5E7EB]">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4 pb-3 border-b border-[#E5E7EB]">
       <div className="flex items-center gap-3">
         <div className="p-2.5 rounded-xl border border-emerald-200 bg-[#DCFCE7] text-[#08C565] shrink-0">
           {icon}
@@ -32,6 +34,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
           <p className="text-[14px] text-[#4B5563] font-normal leading-[1.6] mt-0.5">{subtitle}</p>
         </div>
       </div>
+      {action && <div className="self-end sm:self-auto shrink-0">{action}</div>}
     </div>
   );
 };

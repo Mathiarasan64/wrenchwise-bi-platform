@@ -18,7 +18,7 @@ export const ExecutiveActionRecommendations: React.FC<ExecutiveActionRecommendat
       <SectionHeader
         icon={<Zap className="w-5 h-5 text-emerald-400" />}
         title="Executive Action Recommendations"
-        subtitle="Automated operational recommendations generated dynamically from live Zoho Sheet figures"
+        subtitle="Automated operational recommendations generated dynamically from operational figures"
         accentColor="emerald"
         badgeText="Executive Action Plan"
       />

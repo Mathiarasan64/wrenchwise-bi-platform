@@ -18,7 +18,7 @@ export const SmartActionCards: React.FC<SmartActionCardsProps> = ({ records }) =
 
   const getModuleRoute = (targetExec: string): string => {
     if (targetExec.includes('Collection') || targetExec.includes('Pending')) return '/operations';
-    if (targetExec.includes('Learner') || targetExec.includes('Drop')) return '/learners';
+    if (targetExec.includes('Learner') || targetExec.includes('Drop')) return '/sales-executive';
     if (targetExec.includes('Sales') || targetExec.includes('Executive')) return '/sales-executive';
     return '/revenue';
   };
@@ -27,8 +27,6 @@ export const SmartActionCards: React.FC<SmartActionCardsProps> = ({ records }) =
     switch (route) {
       case '/operations':
         return 'Operations';
-      case '/learners':
-        return 'Learner 360°';
       case '/sales-executive':
         return 'Sales Executive';
       default:

@@ -8,7 +8,6 @@ import { aggregateExecutiveStats } from '@/lib/salesExecutiveMetrics';
 import { FilterBar } from '@/components/filters/FilterBar';
 import { KPIGrid } from '@/components/dashboard/KPIGrid';
 import { ChartsSection } from '@/components/dashboard/ChartsSection';
-import { BusinessInsights } from '@/components/dashboard/BusinessInsights';
 import { EnhancedDataTable } from '@/components/dashboard/EnhancedDataTable';
 import { ErrorAlert } from '@/components/common/ErrorAlert';
 import { PageSkeleton } from '@/components/common/LoadingSkeleton';
@@ -78,7 +77,7 @@ export default function ExecutiveDashboard() {
   const hc = healthColorMap[health.category] || healthColorMap.Average;
 
   return (
-    <div className="space-y-8 animate-fadeIn pb-8">
+    <div className="space-y-8 animate-fadeIn pb-8 max-w-[1600px] mx-auto w-full">
       {/* Executive Command Center */}
       <div className="space-y-5">
         {/* Page Header */}
@@ -92,7 +91,7 @@ export default function ExecutiveDashboard() {
                 Executive Command Center
               </h1>
               <p className="text-sm text-[#6B7280] font-normal leading-[1.6] mt-0.5">
-                Real-time business performance powered by live Zoho Sheet data
+                Real-time operational metrics across all business verticals
                 <span className="text-[#9CA3AF] mx-1.5">•</span>
                 <span className="text-[#6B7280] font-mono text-xs" suppressHydrationWarning>Synced {formatRelativeTime(lastSync)}</span>
               </p>
@@ -105,9 +104,9 @@ export default function ExecutiveDashboard() {
         {error && <ErrorAlert message={error} onRetry={refetchData} />}
 
         {/* ─── Business Health + Top Metrics Row ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Business Health Score Card */}
-          <div className="ww-card p-5 hover-lift flex flex-col justify-between">
+          <div className="ww-card p-5 hover-lift flex flex-col justify-between h-full min-w-0">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Heart className={`w-4 h-4 ${hc.text}`} />
@@ -121,7 +120,7 @@ export default function ExecutiveDashboard() {
             </div>
             <div className="my-2">
               <div className="flex items-baseline gap-2">
-                <span className={`text-4xl font-extrabold font-mono ${hc.text}`}>
+                <span className={`text-3xl sm:text-4xl font-extrabold font-mono ${hc.text}`}>
                   {health.score}
                 </span>
                 <span className="text-sm font-medium text-[#6B7280]">/100</span>
@@ -139,34 +138,34 @@ export default function ExecutiveDashboard() {
           </div>
 
           {/* Top 3 Priority KPIs */}
-          <div className="ww-card p-5 hover-lift">
+          <div className="ww-card p-5 hover-lift flex flex-col justify-between h-full min-w-0">
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="w-4 h-4 text-[#08C565]" />
               <span className="text-sm font-semibold text-[#374151]">Total Revenue</span>
             </div>
-            <div className="text-2xl font-extrabold font-mono text-[#111827]">
+            <div className="text-xl sm:text-2xl font-extrabold font-mono text-[#111827]">
               {formatCurrency(kpis.totalSalesValue)}
             </div>
             <div className="text-xs text-[#6B7280] mt-1.5 font-normal leading-[1.6]">Net contracted sales value</div>
           </div>
 
-          <div className="ww-card p-5 hover-lift">
+          <div className="ww-card p-5 hover-lift flex flex-col justify-between h-full min-w-0">
             <div className="flex items-center gap-2 mb-3">
               <Wallet className="w-4 h-4 text-[#08C565]" />
               <span className="text-sm font-semibold text-[#374151]">Collection %</span>
             </div>
-            <div className="text-2xl font-extrabold font-mono text-[#08C565]">
+            <div className="text-xl sm:text-2xl font-extrabold font-mono text-[#08C565]">
               {formatPercent(kpis.collectionPercentage)}
             </div>
             <div className="text-xs text-[#6B7280] mt-1.5 font-normal leading-[1.6]">{formatCurrency(kpis.amountCollected)} collected</div>
           </div>
 
-          <div className="ww-card p-5 hover-lift">
+          <div className="ww-card p-5 hover-lift flex flex-col justify-between h-full min-w-0">
             <div className="flex items-center gap-2 mb-3">
               <Users className="w-4 h-4 text-[#0B9BC5]" />
               <span className="text-sm font-semibold text-[#374151]">Active Learners</span>
             </div>
-            <div className="text-2xl font-extrabold font-mono text-[#0B9BC5]">
+            <div className="text-xl sm:text-2xl font-extrabold font-mono text-[#0B9BC5]">
               {formatCount(kpis.activeLearners)}
             </div>
             <div className="text-xs text-[#6B7280] mt-1.5 font-normal leading-[1.6]">of {formatCount(kpis.totalLearners)} total</div>
@@ -246,7 +245,6 @@ export default function ExecutiveDashboard() {
             <div className="space-y-2">
               {[
                 { href: '/reports', icon: <FileSpreadsheet className="w-4 h-4 text-[#F59E0B]" />, label: 'Reports & Export' },
-                { href: '/insights', icon: <Lightbulb className="w-4 h-4 text-[#08C565]" />, label: 'Business Insights' },
                 { href: '/operations', icon: <AlertTriangle className="w-4 h-4 text-[#0B9BC5]" />, label: 'Operations MIS' },
               ].map((link) => (
                 <Link
@@ -271,7 +269,6 @@ export default function ExecutiveDashboard() {
       ) : (
         <>
           <KPIGrid kpis={kpis} />
-          <BusinessInsights records={filteredRecords} />
           <ChartsSection records={filteredRecords} />
           <EnhancedDataTable records={filteredRecords} isLoading={isLoading} />
         </>

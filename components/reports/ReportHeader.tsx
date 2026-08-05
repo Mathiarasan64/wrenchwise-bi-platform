@@ -37,31 +37,12 @@ export const ReportHeader: React.FC = () => {
         </p>
       </div>
 
-      {/* Badges: Current Date, Last Refresh, Live Status, Total Records */}
+      {/* Badges: Current Date, Last Refresh, Total Records */}
       <div className="flex items-center gap-2 sm:gap-3 flex-wrap self-end sm:self-auto text-xs font-semibold">
         {/* Current Date */}
         <div className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#E5E7EB] text-[#374151] shadow-xs">
           <Calendar className="w-3.5 h-3.5 text-[#08C565]" />
           <span>{currentDate || '25 Jul 2026'}</span>
-        </div>
-
-        {/* Live Status Badge */}
-        <div className="badge-success flex items-center gap-2">
-          <span className="relative flex h-2 w-2">
-            <span
-              className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                isLoading ? 'bg-[#F59E0B]' : error ? 'bg-[#DC2626]' : 'bg-[#166534]'
-              }`}
-            ></span>
-            <span
-              className={`relative inline-flex rounded-full h-2 w-2 ${
-                isLoading ? 'bg-[#F59E0B]' : error ? 'bg-[#DC2626]' : 'bg-[#166534]'
-              }`}
-            ></span>
-          </span>
-          <span>
-            {isLoading ? 'Syncing...' : error ? 'Error' : 'Live Zoho Connected'}
-          </span>
         </div>
 
         {/* Last Refresh Time */}
@@ -83,7 +64,7 @@ export const ReportHeader: React.FC = () => {
           onClick={() => refetchData()}
           disabled={isLoading}
           className="btn-ghost p-2 text-[#374151] hover:text-[#111827]"
-          title="Refresh Zoho Sheet Data"
+          title="Refresh Data"
         >
           <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin text-[#08C565]' : ''}`} />
         </button>

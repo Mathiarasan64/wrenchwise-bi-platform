@@ -51,7 +51,7 @@ export const CompanyHealthCard: React.FC<CompanyHealthCardProps> = ({ health }) 
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5 font-medium">
-              Comprehensive 30-second operational vitality score calculated dynamically from live Zoho figures
+              Comprehensive 30-second operational vitality score calculated dynamically from operational figures
             </p>
           </div>
         </div>

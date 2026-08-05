@@ -11,6 +11,7 @@ import {
   GraduationCap,
   UserCheck,
   Wrench,
+  LineChart,
   FileSpreadsheet,
   Lightbulb,
   Info,
@@ -33,40 +34,28 @@ export const NAV_ITEMS: NavigationItem[] = [
     description: 'Financial & course revenue metrics',
   },
   {
-    name: 'Learner Analytics',
-    href: '/learners',
-    iconName: 'GraduationCap',
-    description: 'Student & batch enrolment tracking',
-  },
-  {
     name: 'Sales Executive',
     href: '/sales-executive',
     iconName: 'UserCheck',
     description: 'Sales rep performance & pipeline',
   },
   {
-    name: 'Operations MIS',
+    name: 'Operations Command Center',
     href: '/operations',
     iconName: 'Wrench',
     description: 'Workshop & inventory operations',
+  },
+  {
+    name: 'Overall Collection Report',
+    href: '/overall-collection',
+    iconName: 'LineChart',
+    description: 'Student-level EMI collection & payment links',
   },
   {
     name: 'Reports & Export',
     href: '/reports',
     iconName: 'FileSpreadsheet',
     description: 'CSV data export & custom reports',
-  },
-  {
-    name: 'Business Insights',
-    href: '/insights',
-    iconName: 'Lightbulb',
-    description: 'Automated growth & anomaly signals',
-  },
-  {
-    name: 'About Dashboard',
-    href: '/about',
-    iconName: 'Info',
-    description: 'Platform info & KPI definitions',
   },
 ];
 
@@ -82,6 +71,8 @@ const renderIcon = (iconName: string, className: string) => {
       return <UserCheck className={className} />;
     case 'Wrench':
       return <Wrench className={className} />;
+    case 'LineChart':
+      return <LineChart className={className} />;
     case 'FileSpreadsheet':
       return <FileSpreadsheet className={className} />;
     case 'Lightbulb':

@@ -143,8 +143,8 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({ records, i
             <FileSpreadsheet className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-[#111827]">Live Zoho Sheet Operations Table</h3>
-            <p className="text-xs text-[#6B7280] font-normal leading-[1.6]">Parsed directly from published Zoho Sheet CSV URL</p>
+            <h3 className="text-base font-semibold text-[#111827]">Operations Table</h3>
+            <p className="text-xs text-[#6B7280] font-normal leading-[1.6]">Master Operational Dataset</p>
           </div>
         </div>
 

@@ -1,4 +1,5 @@
 import { ZohoRecord } from '@/types';
+import { calculateCentralizedMetrics } from './calculationEngine';
 import { aggregateExecutiveStats, ExecutiveSummaryStats } from './salesExecutiveMetrics';
 
 export interface OperationsOverviewMetrics {
@@ -11,36 +12,8 @@ export interface OperationsOverviewMetrics {
 }
 
 export function calculateOperationsOverview(records: ZohoRecord[]): OperationsOverviewMetrics {
-  let totalPendingAmount = 0;
-  let totalHoldLearners = 0;
-  let totalDroppedLearners = 0;
-  let totalNotOnboarded = 0;
-  let totalSalesValue = 0;
-  let amountCollected = 0;
-  let droppedValue = 0;
-
-  records.forEach((r) => {
-    totalPendingAmount += r.pendingAmount || 0;
-    totalHoldLearners += r.hold || 0;
-    totalDroppedLearners += r.dropped || 0;
-    totalNotOnboarded += r.notOnboarded || 0;
-    totalSalesValue += r.totalSalesValue || 0;
-    amountCollected += r.amountCollected || 0;
-    droppedValue += r.droppedValue || 0;
-  });
-
-  const collectionEfficiency = totalSalesValue > 0 ? (amountCollected / totalSalesValue) * 100 : 0;
-  const criticalPending = records.filter((r) => (r.pendingAmount || 0) > 100000).reduce((sum, r) => sum + r.pendingAmount, 0);
-  const revenueAtRisk = droppedValue + criticalPending;
-
-  return {
-    totalPendingAmount,
-    totalHoldLearners,
-    totalDroppedLearners,
-    totalNotOnboarded,
-    collectionEfficiency,
-    revenueAtRisk,
-  };
+  const m = calculateCentralizedMetrics(records);
+  return m.operations;
 }
 
 export interface PriorityQueueItem {

@@ -7,9 +7,8 @@ import { aggregateExecutiveStats } from '@/lib/salesExecutiveMetrics';
 import { FilterBar } from '@/components/filters/FilterBar';
 import { ExecutiveProfileCard } from '@/components/sales-executive/ExecutiveProfileCard';
 import { ExecutiveLeaderboard } from '@/components/sales-executive/ExecutiveLeaderboard';
-import { ExecutiveComparison } from '@/components/sales-executive/ExecutiveComparison';
 import { ExecutiveChartsSection } from '@/components/sales-executive/ExecutiveChartsSection';
-import { ExecutiveInsightsAndAlerts } from '@/components/sales-executive/ExecutiveInsightsAndAlerts';
+import { SalesExecutiveCompareView } from '@/components/sales-executive/SalesExecutiveCompareView';
 import { ExecutiveDataTable } from '@/components/sales-executive/ExecutiveDataTable';
 import { ErrorAlert } from '@/components/common/ErrorAlert';
 import { PageSkeleton } from '@/components/common/LoadingSkeleton';
@@ -88,13 +87,10 @@ export default function SalesExecutivePage() {
             onSelectExecutive={(name) => setSalesExecutive(name)}
           />
 
-          {/* Side-by-Side Executive Comparison Tool */}
-          <ExecutiveComparison execStats={execStats} />
+          {/* Sales Executive Side-by-Side Comparison Feature */}
+          <SalesExecutiveCompareView execStats={execStats} records={filteredRecords} />
 
-          {/* Top Performers, Attention Signals & Action Recommendations */}
-          <ExecutiveInsightsAndAlerts execStats={execStats} />
-
-          {/* 6 Performance Charts */}
+          {/* 3 Performance Charts */}
           <ExecutiveChartsSection execStats={execStats} />
 
           {/* Searchable Master Executive Data Table */}

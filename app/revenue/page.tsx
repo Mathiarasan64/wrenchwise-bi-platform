@@ -53,7 +53,7 @@ export default function RevenueAnalyticsPage() {
             </div>
             <div>
               <strong className="text-[#111827] block font-bold text-sm">Official Wrench Wise Revenue Module</strong>
-              <span className="font-normal text-xs text-[#4B5563]">Financial breakdown and live course yields connected to official Zoho Sheet pipeline.</span>
+              <span className="font-normal text-xs text-[#4B5563]">Financial breakdown and live course yields for Wrench Wise operational courses.</span>
             </div>
           </div>
 

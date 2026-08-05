@@ -89,37 +89,38 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileNav }) => {
               <span className="font-mono text-xs font-semibold">{currentDateTime || '...'}</span>
             </div>
 
-            {/* Live Data Connection Status */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#F8FAFC] border border-[#E5E7EB] text-xs">
-              <span className="relative flex h-2.5 w-2.5">
-                <span
-                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
-                    isLoading ? 'bg-amber-400' : error ? 'bg-red-400' : 'bg-[#08C565]'
-                  }`}
-                />
-                <span
-                  className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                    isLoading ? 'bg-amber-500' : error ? 'bg-red-500' : 'bg-[#08C565]'
-                  }`}
-                />
-              </span>
-              <span className="font-semibold text-[#111827]">
-                {isLoading ? 'Syncing...' : error ? 'Disconnected' : 'Live Zoho Connected'}
-              </span>
-              <span className="text-[#9CA3AF]">•</span>
-              <span className="text-[#6B7280] font-mono font-medium" suppressHydrationWarning>{syncTimeLabel}</span>
-            </div>
+            {/* Last Updated Timestamp */}
+            {lastSync && (
+              <div
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F8FAFC] border border-[#E5E7EB] text-xs font-mono text-[#374151]"
+                suppressHydrationWarning
+              >
+                <span className="font-semibold text-[#6B7280]">
+                  {(() => {
+                    const d = lastSync;
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    const month = monthNames[d.getMonth()];
+                    const year = d.getFullYear();
+                    const hours = String(d.getHours()).padStart(2, '0');
+                    const minutes = String(d.getMinutes()).padStart(2, '0');
+                    const seconds = String(d.getSeconds()).padStart(2, '0');
+                    return `Last Updated: ${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
+                  })()}
+                </span>
+              </div>
+            )}
 
-            {/* Primary Green Button (#08C565) */}
+            {/* Primary Green Refresh Button (#08C565) */}
             <button
               onClick={() => refetchData()}
               disabled={isLoading}
-              className="btn-primary flex items-center gap-1.5 disabled:opacity-50"
-              title="Refresh data from Zoho Sheet"
-              aria-label="Refresh data"
+              className="btn-primary flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+              title="Fetch latest data directly from Zoho Sheet"
+              aria-label="Refresh data from Zoho Sheet"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Refresh</span>
+              <span className="hidden sm:inline">{isLoading ? 'Refreshing...' : 'Refresh'}</span>
             </button>
           </div>
         </div>

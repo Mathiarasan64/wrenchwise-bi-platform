@@ -95,7 +95,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
             id: key,
             label: r.customerName,
             category: 'Learner',
-            href: '/learners',
+            href: '/sales-executive',
             meta: `${r.salesExecutive} • ${r.learnerStatus}`,
           });
         }
@@ -109,7 +109,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
             id: key,
             label: r.course,
             category: 'Course',
-            href: '/learners',
+            href: '/revenue',
             meta: `${r.section}`,
           });
         }
@@ -156,6 +156,20 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
     return groups;
   }, [results]);
 
+  const handleSelect = useCallback(
+    (result: SearchResult) => {
+      if (result.filterKey === 'salesExecutive' && result.filterValue) {
+        setSalesExecutive(result.filterValue);
+      } else {
+        setSearchQuery(result.label.substring(0, 30));
+      }
+      setQuery('');
+      onClose();
+      router.push(result.href);
+    },
+    [setSalesExecutive, setSearchQuery, router, onClose]
+  );
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'ArrowDown') {
@@ -169,18 +183,8 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ isOpen, onClose }) =
         handleSelect(results[activeIndex]);
       }
     },
-    [results, activeIndex]
+    [results, activeIndex, handleSelect]
   );
-
-  const handleSelect = (result: SearchResult) => {
-    if (result.filterKey === 'salesExecutive' && result.filterValue) {
-      setSalesExecutive(result.filterValue);
-    } else {
-      setSearchQuery(result.label.substring(0, 30));
-    }
-    router.push(result.href);
-    onClose();
-  };
 
   if (!isOpen) return null;
 

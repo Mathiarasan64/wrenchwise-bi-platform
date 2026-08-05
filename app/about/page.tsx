@@ -124,8 +124,8 @@ export default function AboutDashboardPage() {
             <Database className="w-4 h-4 text-[#0B9BC5]" />
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Data Source</span>
           </div>
-          <div className="text-xl font-black text-[#0B9BC5]">Zoho Sheet CSV</div>
-          <div className="text-[11px] text-slate-500 font-medium mt-1">Live published spreadsheet</div>
+          <div className="text-xl font-black text-[#0B9BC5]">Google Sheets API</div>
+          <div className="text-[11px] text-slate-500 font-medium mt-1">Live Google Service Account sync</div>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-2xl p-5 hover-lift shadow-xs">

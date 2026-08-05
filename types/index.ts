@@ -1,7 +1,7 @@
 export interface ZohoRecord {
   id: string;
   section: string; // e.g. 'B2C Operations MIS' or 'B2C - PAP Operations MIS'
-  businessVertical: string; // 'B2C' | 'PAP' — read from Zoho Sheet column
+  businessVertical: string; // 'B2C' | 'PAP' — read from Google Sheet column
   salesExecutive: string;
   totalLearners: number;
   activeLearners: number;
@@ -27,6 +27,9 @@ export interface ZohoRecord {
   region: string;
   leadSource: string;
 }
+
+export type SheetRecord = ZohoRecord;
+export type GoogleSheetRecord = ZohoRecord;
 
 export interface SalesExecutive {
   name: string;
@@ -93,9 +96,12 @@ export interface FilterState {
 
 export type SyncStatus = 'idle' | 'syncing' | 'success' | 'error';
 
+import type { CentralizedMetrics } from '@/lib/calculationEngine';
+
 export interface DataContextType {
   records: ZohoRecord[];
   filteredRecords: ZohoRecord[];
+  centralizedMetrics: CentralizedMetrics;
   isLoading: boolean;
   error: string | null;
   syncStatus: SyncStatus;
@@ -104,6 +110,7 @@ export interface DataContextType {
   refetchData: () => Promise<void>;
   salesExecutivesList: string[];
   rawCsvHeaders: string[];
+  validateCalculations: () => any;
 }
 
 export interface FilterContextType {
@@ -152,3 +159,82 @@ export interface BusinessInsightSummary {
   revenueLeakage: { totalDropped: number; affectedDeals: number };
   executiveNeedingFollowup: { name: string; pendingAmount: number; reason: string };
 }
+
+/* ─── Overall Collection Report Types ─── */
+export interface MonthPaymentData {
+  monthName: string;
+  amount: number;
+  paymentLink: string;
+  expectedEmi: number;
+  status: string;
+}
+
+export interface OverallCollectionRecord {
+  id: string;
+  sNo: number;
+  studentName: string;
+  salesExecutive: string;
+  email: string;
+  phone: string;
+  courseName: string;
+  enrolledMonth: string;
+  shift: string;
+  paymentType: string;
+  totalPrice: number;
+  advance: number;
+  emiTenure: string;
+  pendingColumn: number;
+  totalPayableFee: number;
+  businessVertical: string;
+  learnerStatus: string;
+  monthPayments: Record<string, MonthPaymentData>;
+  amountCollected: number;
+  pendingCollection: number;
+  collectionPercentage: number;
+}
+
+export interface DetectedMonth {
+  name: string;
+  amountCol: string;
+  linkCol: string;
+  expectedCol: string;
+  statusCol: string;
+}
+
+export interface OverallCollectionMetrics {
+  totalLearners: number;
+  totalPayableFee: number;
+  amountCollected: number;
+  pendingCollection: number;
+  collectionPercentage: number;
+  pendingLearners: number;
+  expectedEmiCollection?: number;
+  paidLearners?: number;
+  selectedMonth?: string;
+}
+
+export interface OverallCollectionFilterState {
+  businessVertical: string;
+  salesExecutive: string;
+  courseName: string;
+  enrolledMonth: string;
+  shift: string;
+  paymentType: string;
+  learnerStatus: string;
+  paymentStatus: string;
+  searchQuery: string;
+}
+
+export interface ValidationReportData {
+  rowsLoaded: number;
+  monthsDetected: string[];
+  totalLearners: number;
+  totalPayableFee: number;
+  amountCollected: number;
+  pendingCollection: number;
+  collectionPercentage: number;
+  pendingLearners: number;
+  paymentLinksFound: number;
+  paymentLinksMissing: number;
+}
+

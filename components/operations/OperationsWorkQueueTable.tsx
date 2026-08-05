@@ -10,13 +10,13 @@ import { Table, Search, Download, ArrowUpDown, ChevronLeft, ChevronRight, UserCh
 
 interface OperationsWorkQueueTableProps {
   records: ZohoRecord[];
-  activeCategoryFilter: string | null;
+  activeCategoryFilter?: string | null;
   onSelectExecutive?: (name: string) => void;
 }
 
 export const OperationsWorkQueueTable: React.FC<OperationsWorkQueueTableProps> = ({
   records,
-  activeCategoryFilter,
+  activeCategoryFilter = null,
   onSelectExecutive,
 }) => {
   const [search, setSearch] = useState<string>('');

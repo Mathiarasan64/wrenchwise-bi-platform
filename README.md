@@ -2,7 +2,7 @@
 
 **Business Intelligence & Operations Portal**
 
-A modern Business Intelligence platform built for **Wrench Wise Operations** to monitor business performance using live Zoho Sheet data.
+A modern Business Intelligence platform built for **Wrench Wise Operations** to monitor business performance using Google Sheets API.
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2.35-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-18.3.1-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
@@ -21,7 +21,7 @@ A modern Business Intelligence platform built for **Wrench Wise Operations** to 
 - **Operations Command Center**: Operational health overview, automated priority action cards, interactive follow-up queue cards, and real-time work queue tables.
 - **Reports & Export**: 6 pre-configured business report templates (Executive, Sales, Revenue, Learner, Operations, Receivables), live interactive table previews with multi-column toggles, export history audit log, and instant multi-format downloads (**Excel .xlsx, CSV, PDF, Print**).
 - **AI Business Insights**: Dynamic data-driven decision engine featuring CEO 30-second briefings, root cause analysis, and severity-ranked executive risk alerts.
-- **Live Zoho Sheet Integration**: Direct ingestion from published live Zoho Sheet CSV stream via CORS proxy with 30-second in-memory caching.
+- **Google Sheets API Integration**: Direct fetch using official Google Sheets API via Service Account credentials with 60-second in-memory caching.
 - **Interactive Charts**: Responsive SVG chart visualizations powered by Recharts with high-contrast labels and tooltips.
 - **Responsive Design**: Designed for smooth display across `1920px`, `1600px`, `1440px`, `1366px`, `1280px`, and `1024px` viewports.
 
@@ -34,10 +34,10 @@ A modern Business Intelligence platform built for **Wrench Wise Operations** to 
 - **React**: 18
 - **Tailwind CSS**: 3.4 (White Card Enterprise Design System)
 - **Recharts**: 3.10 (SVG Data Visualization)
-- **PapaParse**: 5.4 (CSV Engine)
+- **Googleapis**: Official Google Sheets API Client
 - **Lucide React**: Vector Icon System
 - **Vercel**: Production Hosting & Serverless Platform
-- **Zoho Public Sheet**: Live Operational Data Stream
+- **Google Sheets API**: Live Operational Data Source
 
 ---
 
@@ -46,7 +46,8 @@ A modern Business Intelligence platform built for **Wrench Wise Operations** to 
 ```
 wrenchwise-command-center/
 ├── app/                        # Next.js App Router Page Routes
-│   ├── api/zoho/route.ts       # Live Zoho Sheet CORS Proxy API
+│   ├── api/google-sheet/route.ts # Live Google Sheets API Route
+
 │   ├── executive/page.tsx      # Executive Dashboard
 │   ├── sales-executive/page.tsx # Sales Executive Intelligence
 │   ├── operations/page.tsx     # Operations Command Center

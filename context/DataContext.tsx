@@ -2,7 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { ZohoRecord, DataContextType, SyncStatus } from '@/types';
-import { fetchZohoCSVData } from '@/lib/zoho/zohoService';
+import { fetchZohoData } from '@/services/zohoService';
+import { calculateCentralizedMetrics, validateCalculations } from '@/lib/calculationEngine';
 import { useFilters } from './FilterContext';
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -10,8 +11,6 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [records, setRecords] = useState<ZohoRecord[]>([]);
   const [headers, setHeaders] = useState<string[]>([]);
-  // Start as false — if localStorage cache exists, zohoService returns instantly
-  // and records will be populated before the first paint
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [error, setError] = useState<string | null>(null);
@@ -21,8 +20,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { filters } = useFilters();
 
   const loadData = useCallback(async (forceRefresh = false) => {
-    // Only show full-page skeleton on very first load (no records yet)
-    // For background refreshes, keep showing existing data quietly
     const hasExistingData = records.length > 0;
     if (!hasExistingData) setIsLoading(true);
 
@@ -30,15 +27,20 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
 
     try {
-      const result = await fetchZohoCSVData(undefined, forceRefresh);
+      const result = await fetchZohoData(forceRefresh);
       setRecords(result.records);
       setHeaders(result.headers);
       setSyncStatus(result.syncStatus);
       setError(result.error);
       setLastSync(result.lastSync);
+
+      // Run automatic calculation audit
+      if (result.records && result.records.length > 0) {
+        validateCalculations(result.records);
+      }
     } catch (err: any) {
-      console.error('Failed to load Zoho data:', err);
-      setError(err.message || 'Connection Error: Unable to fetch live Zoho Sheet CSV.');
+      console.error('Failed to load Zoho Sheet data:', err);
+      setError(err.message || 'Connection Error: Unable to fetch live Zoho Sheet data.');
       setSyncStatus('error');
       if (!hasExistingData) setRecords([]);
     } finally {
@@ -51,6 +53,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loadData();
   }, [loadData]);
 
+  // SINGLE SOURCE OF TRUTH: Calculate centralized metrics respecting active filters
+  const centralizedMetrics = useMemo(() => {
+    return calculateCentralizedMetrics(records, filters);
+  }, [records, filters]);
 
   // Extract unique Sales Executives dynamically from dataset
   const salesExecutivesList = useMemo(() => {
@@ -66,17 +72,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Compute filtered records based on active filters
   const filteredRecords = useMemo(() => {
     return records.filter((record) => {
-      // 0. Business Vertical Filter (primary global filter)
       if (filters.businessVertical !== 'All' && record.businessVertical !== filters.businessVertical) {
         return false;
       }
-
-      // 1. Sales Executive Filter
       if (filters.salesExecutive !== 'All' && record.salesExecutive !== filters.salesExecutive) {
         return false;
       }
-
-      // 2. Search Query Filter
       if (filters.searchQuery.trim() !== '') {
         const query = filters.searchQuery.toLowerCase();
         const matchesSearch =
@@ -86,17 +87,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
           record.operationsObservation.toLowerCase().includes(query);
         if (!matchesSearch) return false;
       }
-
       return true;
     });
   }, [records, filters]);
-
 
   return (
     <DataContext.Provider
       value={{
         records,
         filteredRecords,
+        centralizedMetrics,
         isLoading,
         error,
         syncStatus,
@@ -105,6 +105,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         refetchData: () => loadData(true),
         salesExecutivesList,
         rawCsvHeaders: headers,
+        validateCalculations: () => validateCalculations(records),
       }}
     >
       {children}
@@ -112,10 +113,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useZohoData = (): DataContextType => {
+export const useGoogleSheetsData = (): DataContextType => {
   const context = useContext(DataContext);
   if (!context) {
-    throw new Error('useZohoData must be used within a DataProvider');
+    throw new Error('useGoogleSheetsData must be used within a DataProvider');
   }
   return context;
 };
+
+// Backward compatibility alias for legacy hook imports
+export const useZohoData = useGoogleSheetsData;
