@@ -2,19 +2,27 @@
 
 import React, { useState, useEffect } from 'react';
 import { useZohoData } from '@/context/DataContext';
+import { useOverallCollectionData } from '@/context/OverallCollectionContext';
 import { WrenchWiseLogo } from '@/components/common/WrenchWiseLogo';
 import { GlobalSearch } from '@/components/common/GlobalSearch';
 import { formatRelativeTime } from '@/lib/utils';
-import { RefreshCw, Search, Calendar, Menu, Command } from 'lucide-react';
+import { RefreshCw, Search, Calendar, Menu, Command, CheckCircle } from 'lucide-react';
 
 interface HeaderProps {
   onOpenMobileNav: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ onOpenMobileNav }) => {
-  const { lastSync, refetchData, isLoading, error } = useZohoData();
+  const { lastSync: masterSync, refetchData: refetchMaster, isLoading: masterLoading } = useZohoData();
+  const { lastSync: collectionSync, refetchData: refetchCollection, isLoading: collectionLoading } = useOverallCollectionData();
+  
   const [currentDateTime, setCurrentDateTime] = useState<string>('');
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [syncToast, setSyncToast] = useState<{ message: string; timestamp: string } | null>(null);
+
+  const activeLastSync = collectionSync || masterSync;
+  const isGlobalLoading = masterLoading || collectionLoading || isSyncing;
 
   useEffect(() => {
     const updateTime = () => {
@@ -49,7 +57,34 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileNav }) => {
     return () => document.removeEventListener('keydown', handler);
   }, []);
 
-  const syncTimeLabel = formatRelativeTime(lastSync);
+  const handleFullSync = async () => {
+    setIsSyncing(true);
+    try {
+      await Promise.all([refetchMaster(), refetchCollection(true)]);
+      const d = new Date();
+      const day = String(d.getDate()).padStart(2, '0');
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const month = monthNames[d.getMonth()];
+      const year = d.getFullYear();
+      const hours = String(d.getHours()).padStart(2, '0');
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      const seconds = String(d.getSeconds()).padStart(2, '0');
+      const timestampStr = `${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
+
+      setSyncToast({
+        message: 'Dashboard synchronized successfully.',
+        timestamp: timestampStr,
+      });
+
+      setTimeout(() => {
+        setSyncToast(null);
+      }, 5000);
+    } catch (err) {
+      console.error('Full Sync Error:', err);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   return (
     <>
@@ -90,14 +125,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileNav }) => {
             </div>
 
             {/* Last Updated Timestamp */}
-            {lastSync && (
+            {activeLastSync && (
               <div
                 className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F8FAFC] border border-[#E5E7EB] text-xs font-mono text-[#374151]"
                 suppressHydrationWarning
               >
                 <span className="font-semibold text-[#6B7280]">
                   {(() => {
-                    const d = lastSync;
+                    const d = activeLastSync;
                     const day = String(d.getDate()).padStart(2, '0');
                     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                     const month = monthNames[d.getMonth()];
@@ -105,7 +140,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileNav }) => {
                     const hours = String(d.getHours()).padStart(2, '0');
                     const minutes = String(d.getMinutes()).padStart(2, '0');
                     const seconds = String(d.getSeconds()).padStart(2, '0');
-                    return `Last Updated: ${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
+                    return `Last Synced: ${day} ${month} ${year}, ${hours}:${minutes}:${seconds}`;
                   })()}
                 </span>
               </div>
@@ -113,18 +148,31 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileNav }) => {
 
             {/* Primary Green Refresh Button (#08C565) */}
             <button
-              onClick={() => refetchData()}
-              disabled={isLoading}
+              onClick={handleFullSync}
+              disabled={isGlobalLoading}
               className="btn-primary flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
-              title="Fetch latest data directly from Zoho Sheet"
-              aria-label="Refresh data from Zoho Sheet"
+              title="Full Sync: Fetch latest data and dynamic schema from BOTH Zoho Sheets"
+              aria-label="Refresh data from Zoho Sheets"
             >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">{isLoading ? 'Refreshing...' : 'Refresh'}</span>
+              <RefreshCw className={`w-4 h-4 ${isGlobalLoading ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">{isGlobalLoading ? 'Syncing...' : 'Refresh'}</span>
             </button>
           </div>
         </div>
       </header>
+
+      {/* Sync Success Toast Banner */}
+      {syncToast && (
+        <div className="fixed top-16 right-6 z-50 flex items-center gap-3 px-4 py-3 bg-[#111827] text-white rounded-xl shadow-2xl border border-emerald-500/40 animate-slideInRight">
+          <div className="p-1 rounded-full bg-[#08C565] text-white shrink-0">
+            <CheckCircle className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-[#08C565]">{syncToast.message}</div>
+            <div className="text-[10px] text-gray-300 font-mono mt-0.5">Last Synced: {syncToast.timestamp}</div>
+          </div>
+        </div>
+      )}
 
       {/* Global Search Overlay */}
       <GlobalSearch isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />

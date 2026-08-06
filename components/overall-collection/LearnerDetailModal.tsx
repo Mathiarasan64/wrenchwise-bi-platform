@@ -17,6 +17,7 @@ import {
   Zap,
   ChevronDown,
   ChevronUp,
+  FileText,
 } from 'lucide-react';
 import { useOverallCollectionData } from '@/context/OverallCollectionContext';
 
@@ -134,9 +135,16 @@ export const LearnerDetailModal: React.FC<LearnerDetailModalProps> = ({ learner,
         </span>
       );
     }
+    if (s === 'not updated' || s === '' || s === 'n/a') {
+      return (
+        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-slate-100 text-slate-600 border-slate-200">
+          Not Updated
+        </span>
+      );
+    }
     return (
       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border bg-slate-100 text-slate-700 border-slate-200">
-        {status || 'N/A'}
+        {status}
       </span>
     );
   };
@@ -429,11 +437,11 @@ export const LearnerDetailModal: React.FC<LearnerDetailModalProps> = ({ learner,
                               </td>
 
                               <td className="py-2 px-3 text-right font-mono text-[#4B5563]">
-                                {data && data.expectedEmi > 0 ? formatCurrency(data.expectedEmi) : '—'}
+                                {data && data.hasExpectedEmi && data.expectedEmi > 0 ? formatCurrency(data.expectedEmi) : '—'}
                               </td>
 
                               <td className="py-2 px-3 text-right font-mono font-bold text-[#08C565]">
-                                {formatCurrency(data ? data.amount : 0)}
+                                {data && data.hasAmount ? formatCurrency(data.amount) : '—'}
                               </td>
 
                               <td className="py-2 px-3 text-center">
@@ -465,7 +473,7 @@ export const LearnerDetailModal: React.FC<LearnerDetailModalProps> = ({ learner,
                                     </button>
                                   </div>
                                 ) : (
-                                  <span className="text-[9px] text-[#9CA3AF] italic">No Link</span>
+                                  <span className="text-[9px] text-[#9CA3AF] italic">No Payment Link Available</span>
                                 )}
                               </td>
                             </tr>
@@ -580,6 +588,46 @@ export const LearnerDetailModal: React.FC<LearnerDetailModalProps> = ({ learner,
               </div>
             )}
           </div>
+
+          {/* ========================================================
+              SECTION 5: 📋 Additional Information (Dynamic Zoho Columns)
+             ======================================================== */}
+          {activeLearner.additionalFields && Object.keys(activeLearner.additionalFields).length > 0 && (
+            <div className="border border-[#E5E7EB] rounded-xl overflow-hidden bg-white shadow-2xs">
+              <button
+                onClick={() => toggleSection(5)}
+                className="w-full flex items-center justify-between p-3 bg-[#F8FAFC] hover:bg-[#F1F5F9] transition-colors text-left font-bold text-xs text-[#111827] uppercase tracking-wider"
+              >
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-[#0B9BC5]" />
+                  <span>5. Additional Information</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-[#6B7280]">
+                    {Object.keys(activeLearner.additionalFields).length} Fields
+                  </span>
+                  {openSections.includes(5) ? (
+                    <ChevronUp className="w-4 h-4 text-[#6B7280]" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-[#6B7280]" />
+                  )}
+                </div>
+              </button>
+
+              {openSections.includes(5) && (
+                <div className="p-3 space-y-2 text-xs text-[#374151] border-t border-[#E5E7EB] animate-fadeIn">
+                  {Object.entries(activeLearner.additionalFields).map(([colName, val]) => (
+                    <div key={colName} className="flex items-center justify-between py-1 border-b border-[#F1F5F9] last:border-0">
+                      <span className="font-medium text-[#6B7280] truncate max-w-[180px]">{colName}</span>
+                      <span className="font-semibold text-[#111827] select-all truncate max-w-[220px]">
+                        {val !== null && val !== undefined && String(val).trim() !== '' ? String(val) : '—'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -22,6 +22,10 @@ export async function GET(request: Request) {
 
   const now = Date.now();
 
+  if (isForceRefresh) {
+    serverCache = null;
+  }
+
   // Bypass cache if user explicitly clicked Refresh
   if (!isForceRefresh && serverCache && now - serverCache.ts < SERVER_CACHE_TTL_MS) {
     return new NextResponse(serverCache.csvText, {
@@ -29,18 +33,21 @@ export async function GET(request: Request) {
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
         'X-Cache': 'HIT',
-        'Cache-Control': 'public, max-age=30, stale-while-revalidate=15',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     });
   }
 
-  const targetUrl = getZohoUrl();
+  const baseUrl = getZohoUrl();
+  const targetUrl = baseUrl.includes('?') ? `${baseUrl}&_t=${now}` : `${baseUrl}?_t=${now}`;
 
   try {
     const response = await fetch(targetUrl, {
       method: 'GET',
       headers: {
         Accept: 'text/csv,text/plain,*/*',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        Pragma: 'no-cache',
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       },
@@ -64,7 +71,9 @@ export async function GET(request: Request) {
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
         'X-Cache': 'MISS',
-        'Cache-Control': 'public, max-age=30, stale-while-revalidate=15',
+        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     });
   } catch (err: any) {

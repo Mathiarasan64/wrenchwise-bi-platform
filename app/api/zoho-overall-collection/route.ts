@@ -23,18 +23,23 @@ export async function GET(request: Request) {
 
   const now = Date.now();
 
+  if (isForceRefresh) {
+    serverCache = null;
+  }
+
   if (!isForceRefresh && serverCache && now - serverCache.ts < SERVER_CACHE_TTL_MS) {
     return new NextResponse(serverCache.csvText, {
       status: 200,
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
         'X-Cache': 'HIT',
-        'Cache-Control': 'public, max-age=30, stale-while-revalidate=15',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
       },
     });
   }
 
-  const targetUrl = getCollectionUrl();
+  const baseUrl = getCollectionUrl();
+  const targetUrl = baseUrl.includes('?') ? `${baseUrl}&_t=${now}` : `${baseUrl}?_t=${now}`;
 
   try {
     const response = await fetch(targetUrl, {
@@ -66,7 +71,9 @@ export async function GET(request: Request) {
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
         'X-Cache': 'MISS',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+        Pragma: 'no-cache',
+        Expires: '0',
       },
     });
   } catch (err: any) {

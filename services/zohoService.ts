@@ -192,6 +192,30 @@ export function parseZohoSheetRows(rows: string[][]): {
 
     const section = businessVertical === 'PAP' ? 'B2C - PAP Operations MIS' : 'B2C Operations MIS';
 
+    // Build additionalFields for dynamic columns
+    const KNOWN_COLS = [
+      'sales executive', 'business vertical', 'businessvertical', 'vertical',
+      'active learners', 'onboarded - not active', 'onboarded not active',
+      'hold', 'not on-boarded', 'not onboarded', 'dropped', 'total learners',
+      'conversion rate', 'original sales value', 'original sales', 'original amount',
+      'total sales value', 'total sales', 'amount', 'dropped value', 'dropped sales value',
+      'active sales value', 'active sales', 'amount collected', 'collected amount', 'collected',
+      'collection % including registration amount', 'collection %', 'collection percentage',
+      'pending amount', 'operations observation', 'observation', 'notes'
+    ];
+
+    const additionalFields: Record<string, any> = {};
+    const allFields: Record<string, any> = {};
+
+    Object.entries(headerColMap).forEach(([colLower, colIdx]) => {
+      const rawColName = extractedHeaders.find(h => h.toLowerCase().trim() === colLower) || colLower;
+      const cellVal = cleanedRow[colIdx] ?? '';
+      allFields[rawColName] = cellVal;
+      if (!KNOWN_COLS.includes(colLower) && cellVal !== '') {
+        additionalFields[rawColName] = cellVal;
+      }
+    });
+
     records.push({
       id: `ZH-${businessVertical}-${salesExecName.replace(/\s+/g, '')}-${index}`,
       section,
@@ -220,6 +244,8 @@ export function parseZohoSheetRows(rows: string[][]): {
       learnerStatus,
       region: 'Pan India',
       leadSource: 'Zoho Live Sheet',
+      additionalFields,
+      allFields,
     });
   });
 
@@ -231,6 +257,11 @@ export function parseZohoSheetRows(rows: string[][]): {
  */
 export async function fetchZohoData(forceRefresh = false): Promise<ZohoFetchResult> {
   const now = Date.now();
+
+  if (forceRefresh) {
+    cachedResult = null;
+    lastFetchTime = 0;
+  }
 
   if (!forceRefresh && cachedResult && now - lastFetchTime < CACHE_TTL_MS) {
     return cachedResult;

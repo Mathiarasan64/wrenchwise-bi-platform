@@ -52,6 +52,57 @@ let cachedResult: OverallCollectionFetchResult | null = null;
 let lastFetchTime = 0;
 const CACHE_TTL_MS = 30_000;
 
+const STRUCTURAL_KEYWORDS = [
+  's.no', 'sno', 'sl.no', 'sl no',
+  'student name', 'students name', 'student', 'name',
+  'sales executive', 'executive', 'sales rep',
+  'business vertical', 'vertical',
+  'email',
+  'phone no', 'phone', 'mobile',
+  'course name', 'course',
+  'enrolled month', 'enrolled',
+  'shift',
+  'payment type', 'paymenttype',
+  'total price', 'price',
+  'advance',
+  'emi tenure', 'tenure',
+  'pending column', 'pending amount', 'pending',
+  'total payable fee', 'payable fee',
+  'learner status'
+];
+
+function extractMonthNameFromHeader(header: string): string | null {
+  if (!header) return null;
+  const h = header.toLowerCase().trim();
+  
+  if (h.startsWith('payment link')) {
+    const match = header.match(/(?:payment link\s*[\(-]?\s*)([a-z0-9\s-]+)[\)]?/i);
+    if (match && match[1]) return match[1].trim();
+  }
+  
+  if (h.startsWith('expected emi')) {
+    const match = header.match(/(?:expected emi collection for|expected emi\s*[\(-]?\s*)([a-z0-9\s-]+)[\)]?/i);
+    if (match && match[1]) return match[1].trim();
+  }
+  
+  if (h.startsWith('payment status')) {
+    const match = header.match(/(?:payment status\s*[\(-]?\s*)([a-z0-9\s-]+)[\)]?/i);
+    if (match && match[1]) return match[1].trim();
+  }
+  
+  const isStructural = STRUCTURAL_KEYWORDS.some(
+    (kw) => h === kw || h.includes('enrolled month') || h.includes('learner status')
+  );
+  if (!isStructural) {
+    const firstWord = h.split(/[\s-]/)[0];
+    if (MONTH_NAMES.includes(firstWord)) {
+      return header.trim();
+    }
+  }
+  
+  return null;
+}
+
 /**
  * Dynamically detects month columns and parses Overall Collection Sheet CSV rows
  */
@@ -102,41 +153,61 @@ export function parseOverallCollectionSheet(rows: string[][]): {
   const totalPayableFeeCol = findColIndex(['total payable fee', 'payable fee']);
   const learnerStatusCol = findColIndex(['learner status']);
 
-  // Dynamic Month Detection
-  // Header matching rules:
-  // 1. Header equal to month name -> Paid Amount for that month
-  // 2. Header starting with "Payment Link (" -> Payment URL
-  // 3. Header starting with "Expected EMI Collection for" -> Expected EMI
-  // 4. Header starting with "Payment Status (" -> Payment Status
-  const detectedMonths: DetectedMonth[] = [];
-  
-  cleanHeaders.forEach((h, idx) => {
-    const trimmedH = h.trim();
-    if (
-      MONTH_NAMES.includes(trimmedH) &&
-      !trimmedH.startsWith('payment link') &&
-      !trimmedH.startsWith('expected emi') &&
-      !trimmedH.startsWith('payment status')
-    ) {
-      const monthDisplay = rawHeaders[idx]; // Preserve exact casing e.g. 'June'
-      
-      const linkIdx = cleanHeaders.findIndex(
-        (lh) => (lh.startsWith('payment link (') || lh.includes('payment link')) && lh.includes(trimmedH)
-      );
-      const expectedIdx = cleanHeaders.findIndex(
-        (eh) => (eh.startsWith('expected emi collection for') || eh.includes('expected emi')) && eh.includes(trimmedH)
-      );
-      const statusIdx = cleanHeaders.findIndex(
-        (sh) => (sh.startsWith('payment status (') || sh.includes('payment status')) && sh.includes(trimmedH)
-      );
+  // Dynamic Month & Column Discovery
+  const monthNameMap = new Map<string, string>(); // cleanLower -> displayName
 
-      detectedMonths.push({
-        name: monthDisplay,
-        amountCol: rawHeaders[idx],
-        linkCol: linkIdx >= 0 ? rawHeaders[linkIdx] : '',
-        expectedCol: expectedIdx >= 0 ? rawHeaders[expectedIdx] : '',
-        statusCol: statusIdx >= 0 ? rawHeaders[statusIdx] : '',
-      });
+  cleanHeaders.forEach((_, idx) => {
+    const extracted = extractMonthNameFromHeader(rawHeaders[idx]);
+    if (extracted) {
+      const cleanKey = extracted.toLowerCase().trim();
+      if (!monthNameMap.has(cleanKey)) {
+        const formattedName = extracted.charAt(0).toUpperCase() + extracted.slice(1);
+        monthNameMap.set(cleanKey, formattedName);
+      }
+    }
+  });
+
+  const detectedMonths: DetectedMonth[] = [];
+  const monthColsSet = new Set<number>();
+
+  monthNameMap.forEach((displayName, cleanKey) => {
+    const amountIdx = cleanHeaders.findIndex(
+      (h) => (h === cleanKey || h.includes(cleanKey)) && !h.startsWith('payment link') && !h.startsWith('expected emi') && !h.startsWith('payment status')
+    );
+    const linkIdx = cleanHeaders.findIndex(
+      (h) => (h.startsWith('payment link') || h.includes('payment link')) && h.includes(cleanKey)
+    );
+    const expectedIdx = cleanHeaders.findIndex(
+      (h) => (h.startsWith('expected emi') || h.includes('expected emi')) && h.includes(cleanKey)
+    );
+    const statusIdx = cleanHeaders.findIndex(
+      (h) => (h.startsWith('payment status') || h.includes('payment status')) && h.includes(cleanKey)
+    );
+
+    if (amountIdx >= 0) monthColsSet.add(amountIdx);
+    if (linkIdx >= 0) monthColsSet.add(linkIdx);
+    if (expectedIdx >= 0) monthColsSet.add(expectedIdx);
+    if (statusIdx >= 0) monthColsSet.add(statusIdx);
+
+    detectedMonths.push({
+      name: displayName,
+      amountCol: amountIdx >= 0 ? rawHeaders[amountIdx] : displayName,
+      linkCol: linkIdx >= 0 ? rawHeaders[linkIdx] : '',
+      expectedCol: expectedIdx >= 0 ? rawHeaders[expectedIdx] : '',
+      statusCol: statusIdx >= 0 ? rawHeaders[statusIdx] : '',
+    });
+  });
+
+  // Identify Dynamic Business Columns (non-structural and non-month)
+  const structuralColsSet = new Set<number>();
+  [sNoCol, studentNameCol, salesExecCol, businessVerticalCol, emailCol, phoneCol, courseCol, enrolledMonthCol, shiftCol, paymentTypeCol, totalPriceCol, advanceCol, emiTenureCol, pendingCol, totalPayableFeeCol, learnerStatusCol].forEach((colIdx) => {
+    if (colIdx >= 0) structuralColsSet.add(colIdx);
+  });
+
+  const additionalColIndexes: number[] = [];
+  rawHeaders.forEach((_, idx) => {
+    if (!structuralColsSet.has(idx) && !monthColsSet.has(idx)) {
+      additionalColIndexes.push(idx);
     }
   });
 
@@ -184,16 +255,33 @@ export function parseOverallCollectionSheet(rows: string[][]): {
       const expectedIdx = m.expectedCol ? rawHeaders.indexOf(m.expectedCol) : -1;
       const statusIdx = m.statusCol ? rawHeaders.indexOf(m.statusCol) : -1;
 
-      const amt = amountIdx >= 0 ? safeParseNumber(row[amountIdx]) : 0;
-      const link = linkIdx >= 0 ? cleanUrl(row[linkIdx]) : '';
-      const exp = expectedIdx >= 0 ? safeParseNumber(row[expectedIdx]) : 0;
-      const st = statusIdx >= 0 ? String(row[statusIdx] || '').trim() : 'N/A';
+      const rawAmt = amountIdx >= 0 && row[amountIdx] !== undefined ? String(row[amountIdx]).trim() : '';
+      const rawLink = linkIdx >= 0 && row[linkIdx] !== undefined ? String(row[linkIdx]).trim() : '';
+      const rawExp = expectedIdx >= 0 && row[expectedIdx] !== undefined ? String(row[expectedIdx]).trim() : '';
+      const rawSt = statusIdx >= 0 && row[statusIdx] !== undefined ? String(row[statusIdx]).trim() : '';
+
+      const hasAmt = rawAmt !== '' && rawAmt !== '-' && rawAmt.toLowerCase() !== 'n/a' && rawAmt.toLowerCase() !== 'null';
+      const amt = hasAmt ? safeParseNumber(rawAmt) : 0;
+
+      const link = cleanUrl(rawLink);
+
+      const hasExp = rawExp !== '' && rawExp !== '-' && rawExp.toLowerCase() !== 'n/a' && rawExp.toLowerCase() !== 'null';
+      const exp = hasExp ? safeParseNumber(rawExp) : 0;
+
+      let st = rawSt;
+      if (!st || st === '-' || st.toLowerCase() === 'null' || st.toLowerCase() === 'undefined') {
+        st = 'Not Updated';
+      }
 
       monthPayments[m.name] = {
         monthName: m.name,
         amount: amt,
+        hasAmount: hasAmt,
+        rawAmount: rawAmt,
         paymentLink: link,
         expectedEmi: exp,
+        hasExpectedEmi: hasExp,
+        rawExpectedEmi: rawExp,
         status: st,
       };
 
@@ -207,6 +295,22 @@ export function parseOverallCollectionSheet(rows: string[][]): {
     const pendingCollection = pendingColumn;
     const collectionPercentage =
       totalPayableFee > 0 ? (amountCollected / totalPayableFee) * 100 : 0;
+
+    const additionalFields: Record<string, any> = {};
+    const allFields: Record<string, any> = {};
+
+    rawHeaders.forEach((colName, colIdx) => {
+      const cellVal = row[colIdx] !== undefined ? String(row[colIdx]).trim() : '';
+      allFields[colName] = cellVal;
+    });
+
+    additionalColIndexes.forEach((colIdx) => {
+      const colName = rawHeaders[colIdx];
+      const cellVal = row[colIdx] !== undefined ? String(row[colIdx]).trim() : '';
+      if (colName && cellVal !== '') {
+        additionalFields[colName] = cellVal;
+      }
+    });
 
     records.push({
       id: `coll-${i}-${studentName.replace(/\s+/g, '-').toLowerCase()}`,
@@ -230,6 +334,8 @@ export function parseOverallCollectionSheet(rows: string[][]): {
       amountCollected,
       pendingCollection,
       collectionPercentage,
+      additionalFields,
+      allFields,
     });
   }
 
@@ -289,6 +395,11 @@ export async function fetchOverallCollectionData(
   forceRefresh = false
 ): Promise<OverallCollectionFetchResult> {
   const now = Date.now();
+
+  if (forceRefresh) {
+    cachedResult = null;
+    lastFetchTime = 0;
+  }
 
   if (!forceRefresh && cachedResult && now - lastFetchTime < CACHE_TTL_MS) {
     return cachedResult;
@@ -413,7 +524,7 @@ export function calculateOverallCollectionMetrics(
         const st = (monthData.status || '').toLowerCase().trim();
         if (st === 'paid' || st === 'completed') {
           paidLearners++;
-        } else {
+        } else if (st === 'pending') {
           pendingLearners++;
         }
       }

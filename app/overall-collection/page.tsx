@@ -5,6 +5,7 @@ import {
   OverallCollectionProvider,
   useOverallCollectionData,
 } from '@/context/OverallCollectionContext';
+import { useZohoData } from '@/context/DataContext';
 import { OverallCollectionKPIGrid } from '@/components/overall-collection/OverallCollectionKPIGrid';
 import { OverallCollectionChartsSection } from '@/components/overall-collection/OverallCollectionChartsSection';
 import { OverallCollectionFilterBar } from '@/components/overall-collection/OverallCollectionFilterBar';
@@ -32,13 +33,14 @@ function formatTimestamp(date: Date | null): string {
 function OverallCollectionContent() {
   const { filteredRecords, isLoading, error, refetchData, lastSync } =
     useOverallCollectionData();
+  const { refetchData: refetchMaster } = useZohoData();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showValidationReport, setShowValidationReport] = useState(false);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
-      await refetchData(true);
+      await Promise.all([refetchMaster(), refetchData(true)]);
     } finally {
       setIsRefreshing(false);
     }
@@ -71,7 +73,7 @@ function OverallCollectionContent() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 self-end sm:self-auto">
           <div className="flex items-center gap-1.5 text-[11px] text-[#6B7280] font-mono bg-[#F8FAFC] px-3 py-1.5 rounded-xl border border-[#E5E7EB]">
             <Clock className="w-3.5 h-3.5 text-[#08C565]" />
-            <span>Last Updated: {formattedTimestamp}</span>
+            <span>Last Synced: {formattedTimestamp}</span>
           </div>
 
           <button
@@ -88,12 +90,12 @@ function OverallCollectionContent() {
             className="ww-button ww-button-primary text-xs flex items-center justify-center gap-2 py-2 px-4 shadow-xs"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? 'Refreshing Data...' : 'Refresh'}
+            {isRefreshing ? 'Syncing...' : 'Refresh'}
           </button>
         </div>
       </div>
 
-      {error && <ErrorAlert message={error} onRetry={() => refetchData(true)} />}
+      {error && <ErrorAlert message={error} onRetry={() => handleRefresh()} />}
 
       {/* Filter Toolbar & Global Search */}
       <OverallCollectionFilterBar />
@@ -125,11 +127,4 @@ function OverallCollectionContent() {
   );
 }
 
-
-export default function OverallCollectionPage() {
-  return (
-    <OverallCollectionProvider>
-      <OverallCollectionContent />
-    </OverallCollectionProvider>
-  );
-}
+export default OverallCollectionContent;

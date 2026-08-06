@@ -38,7 +38,17 @@ export const OverallCollectionFilterBar: React.FC = () => {
       new Set(records.map((r) => r.learnerStatus).filter(Boolean))
     ).sort();
 
-    const paymentStatuses = ['Paid', 'Pending', 'Completed'];
+    const paymentStatusesSet = new Set<string>(['Paid', 'Pending', 'Completed']);
+    records.forEach((r) => {
+      if (r.monthPayments) {
+        Object.values(r.monthPayments).forEach((m) => {
+          if (m.status && m.status !== 'N/A' && m.status.trim() !== '') {
+            paymentStatusesSet.add(m.status.trim());
+          }
+        });
+      }
+    });
+    const paymentStatuses = Array.from(paymentStatusesSet).sort();
 
     return {
       businessVerticals,

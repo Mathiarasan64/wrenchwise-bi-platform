@@ -232,17 +232,19 @@ export const OverallCollectionTable: React.FC = () => {
                 paginatedRecords.map((r) => {
                   let paymentUrl = '';
                   let statusStr = r.learnerStatus;
-                  let expectedEmiVal = r.totalPayableFee;
-                  let paidVal = r.amountCollected;
-                  let pendingVal = r.pendingCollection;
+                  let expectedEmiDisplay = formatCurrency(r.totalPayableFee);
+                  let paidDisplay = formatCurrency(r.amountCollected);
+                  let pendingDisplay = formatCurrency(r.pendingCollection);
 
                   if (isMonthView) {
                     const monthData = r.monthPayments[selectedMonth];
                     paymentUrl = monthData?.paymentLink || '';
-                    statusStr = monthData?.status || 'N/A';
-                    expectedEmiVal = monthData?.expectedEmi || 0;
-                    paidVal = monthData?.amount || 0;
-                    pendingVal = Math.max(0, expectedEmiVal - paidVal);
+                    statusStr = monthData?.status || 'Not Updated';
+                    expectedEmiDisplay = monthData && monthData.hasExpectedEmi && monthData.expectedEmi > 0 ? formatCurrency(monthData.expectedEmi) : '—';
+                    paidDisplay = monthData && monthData.hasAmount ? formatCurrency(monthData.amount) : '—';
+                    const expVal = monthData?.expectedEmi || 0;
+                    const pVal = monthData?.amount || 0;
+                    pendingDisplay = monthData && monthData.hasExpectedEmi ? formatCurrency(Math.max(0, expVal - pVal)) : '—';
                   } else {
                     const latestMonthObj = detectedMonths.slice(-1)[0];
                     const latestData = latestMonthObj ? r.monthPayments[latestMonthObj.name] : null;
@@ -284,17 +286,17 @@ export const OverallCollectionTable: React.FC = () => {
 
                       {/* Payable Fee / Expected EMI */}
                       <td className="py-3 px-4 text-right font-mono font-semibold text-[#111827]">
-                        {formatCurrency(expectedEmiVal)}
+                        {expectedEmiDisplay}
                       </td>
 
                       {/* Amount Collected / Paid Amount */}
                       <td className="py-3 px-4 text-right font-mono font-bold text-[#08C565]">
-                        {formatCurrency(paidVal)}
+                        {paidDisplay}
                       </td>
 
                       {/* Pending Collection / Pending EMI */}
                       <td className="py-3 px-4 text-right font-mono font-bold text-[#F59E0B]">
-                        {formatCurrency(pendingVal)}
+                        {pendingDisplay}
                       </td>
 
                       {/* Status Badge */}
@@ -303,7 +305,7 @@ export const OverallCollectionTable: React.FC = () => {
                           className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border inline-block ${
                             statusStr.toLowerCase() === 'active' || statusStr.toLowerCase() === 'paid' || statusStr.toLowerCase() === 'completed'
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : statusStr.toLowerCase() === 'inactive' || statusStr.toLowerCase() === 'pending'
+                              : statusStr.toLowerCase() === 'pending'
                               ? 'bg-amber-50 text-amber-700 border-amber-200'
                               : statusStr.toLowerCase() === 'overdue'
                               ? 'bg-red-50 text-red-700 border-red-200'

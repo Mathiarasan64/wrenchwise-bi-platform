@@ -26,6 +26,8 @@ export interface ZohoRecord {
   learnerStatus: string;
   region: string;
   leadSource: string;
+  additionalFields?: Record<string, any>;
+  allFields?: Record<string, any>;
 }
 
 export type SheetRecord = ZohoRecord;
@@ -164,9 +166,13 @@ export interface BusinessInsightSummary {
 export interface MonthPaymentData {
   monthName: string;
   amount: number;
+  hasAmount?: boolean;
   paymentLink: string;
   expectedEmi: number;
+  hasExpectedEmi?: boolean;
   status: string;
+  rawAmount?: string;
+  rawExpectedEmi?: string;
 }
 
 export interface OverallCollectionRecord {
@@ -191,6 +197,8 @@ export interface OverallCollectionRecord {
   amountCollected: number;
   pendingCollection: number;
   collectionPercentage: number;
+  additionalFields?: Record<string, any>;
+  allFields?: Record<string, any>;
 }
 
 export interface DetectedMonth {
