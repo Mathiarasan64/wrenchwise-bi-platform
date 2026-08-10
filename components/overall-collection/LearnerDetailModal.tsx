@@ -104,6 +104,12 @@ export const LearnerDetailModal: React.FC<LearnerDetailModalProps> = ({ learner,
   const monthEntries = activeLearner.monthPayments ? Object.entries(activeLearner.monthPayments) : [];
   const isMonthSelected = selectedMonth && selectedMonth !== 'Overall';
 
+  // Action View Calculations: Pending Amount = Total Payable Fee - Amount Collected
+  const totalPayableFee = activeLearner.totalPayableFee || 0;
+  const amountCollected = activeLearner.amountCollected || 0;
+  const pendingAmount = totalPayableFee - amountCollected;
+  const collectionPercentage = totalPayableFee > 0 ? (amountCollected / totalPayableFee) * 100 : 0;
+
   // Extract latest payment link available for candidate
   let latestLink = '';
   monthEntries.forEach(([_, data]) => {
@@ -360,14 +366,14 @@ export const LearnerDetailModal: React.FC<LearnerDetailModalProps> = ({ learner,
                 <div className="p-2.5 bg-[#FEF3C7]/50 rounded-lg border border-amber-200">
                   <p className="text-[10px] font-semibold text-[#F59E0B]">Pending Amount</p>
                   <p className="text-xs font-bold font-mono text-[#F59E0B] mt-0.5">
-                    {formatCurrency(activeLearner.pendingCollection || 0)}
+                    {formatCurrency(pendingAmount)}
                   </p>
                 </div>
 
                 <div className="p-2.5 bg-[#F8FAFC] rounded-lg border border-[#E5E7EB]">
                   <p className="text-[10px] font-semibold text-[#6B7280]">Collection %</p>
                   <p className="text-xs font-bold font-mono text-[#08C565] mt-0.5">
-                    {formatPercent(activeLearner.collectionPercentage || 0)}
+                    {formatPercent(collectionPercentage)}
                   </p>
                 </div>
               </div>
