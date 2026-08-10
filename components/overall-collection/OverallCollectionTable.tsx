@@ -51,6 +51,11 @@ export const OverallCollectionTable: React.FC = () => {
           valA = Math.max(0, (mA?.expectedEmi || 0) - (mA?.amount || 0));
           valB = Math.max(0, (mB?.expectedEmi || 0) - (mB?.amount || 0));
         }
+      } else {
+        if (sortField === 'pendingCollection') {
+          valA = a.totalPayableFee > 0 ? Math.max(0, (a.totalPayableFee || 0) - (a.amountCollected || 0)) : 0;
+          valB = b.totalPayableFee > 0 ? Math.max(0, (b.totalPayableFee || 0) - (b.amountCollected || 0)) : 0;
+        }
       }
 
       if (typeof valA === 'number' && typeof valB === 'number') {
@@ -95,8 +100,8 @@ export const OverallCollectionTable: React.FC = () => {
       'EMI Tenure': r.emiTenure,
       'Total Payable Fee': r.totalPayableFee,
       'Amount Collected': r.amountCollected,
-      'Pending Amount': r.pendingCollection,
-      'Collection %': `${r.collectionPercentage.toFixed(2)}%`,
+      'Pending Amount': r.totalPayableFee > 0 ? Math.max(0, r.totalPayableFee - r.amountCollected) : 0,
+      'Collection %': `${(r.totalPayableFee > 0 ? (r.amountCollected / r.totalPayableFee) * 100 : 0).toFixed(2)}%`,
       Status: r.learnerStatus,
     }));
 
@@ -232,9 +237,10 @@ export const OverallCollectionTable: React.FC = () => {
                 paginatedRecords.map((r) => {
                   let paymentUrl = '';
                   let statusStr = r.learnerStatus;
-                  let expectedEmiDisplay = formatCurrency(r.totalPayableFee);
+                  let expectedEmiDisplay = r.totalPayableFee > 0 ? formatCurrency(r.totalPayableFee) : '—';
                   let paidDisplay = formatCurrency(r.amountCollected);
-                  let pendingDisplay = formatCurrency(r.pendingCollection);
+                  const calcPending = r.totalPayableFee > 0 ? Math.max(0, (r.totalPayableFee || 0) - (r.amountCollected || 0)) : 0;
+                  let pendingDisplay = r.totalPayableFee > 0 ? formatCurrency(calcPending) : '—';
 
                   if (isMonthView) {
                     const monthData = r.monthPayments[selectedMonth];

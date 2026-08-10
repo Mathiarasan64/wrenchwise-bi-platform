@@ -107,7 +107,7 @@ export const LearnerDetailModal: React.FC<LearnerDetailModalProps> = ({ learner,
   // Action View Calculations: Pending Amount = Total Payable Fee - Amount Collected
   const totalPayableFee = activeLearner.totalPayableFee || 0;
   const amountCollected = activeLearner.amountCollected || 0;
-  const pendingAmount = totalPayableFee - amountCollected;
+  const pendingAmount = totalPayableFee > 0 ? Math.max(0, totalPayableFee - amountCollected) : 0;
   const collectionPercentage = totalPayableFee > 0 ? (amountCollected / totalPayableFee) * 100 : 0;
 
   // Extract latest payment link available for candidate
