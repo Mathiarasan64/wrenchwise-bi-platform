@@ -18,6 +18,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Building2,
+  BookUser,
 } from 'lucide-react';
 
 export const NAV_ITEMS: NavigationItem[] = [
@@ -52,6 +53,12 @@ export const NAV_ITEMS: NavigationItem[] = [
     description: 'Student-level EMI collection & payment links',
   },
   {
+    name: 'Learner Status Tracker',
+    href: '/learner-status',
+    iconName: 'BookUser',
+    description: 'Learner lookup & onboarding status',
+  },
+  {
     name: 'Reports & Export',
     href: '/reports',
     iconName: 'FileSpreadsheet',
@@ -75,6 +82,8 @@ const renderIcon = (iconName: string, className: string) => {
       return <LineChart className={className} />;
     case 'FileSpreadsheet':
       return <FileSpreadsheet className={className} />;
+    case 'BookUser':
+      return <BookUser className={className} />;
     case 'Lightbulb':
       return <Lightbulb className={className} />;
     case 'Info':

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { NAV_ITEMS } from './Sidebar';
 import { WrenchWiseLogo } from '@/components/common/WrenchWiseLogo';
-import { X, ChevronRight, LayoutDashboard, TrendingUp, GraduationCap, UserCheck, Wrench, FileSpreadsheet, Lightbulb, Info } from 'lucide-react';
+import { X, ChevronRight, LayoutDashboard, TrendingUp, GraduationCap, UserCheck, Wrench, LineChart, FileSpreadsheet, BookUser, Lightbulb, Info } from 'lucide-react';
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -24,8 +24,12 @@ const renderIcon = (iconName: string, className: string) => {
       return <UserCheck className={className} />;
     case 'Wrench':
       return <Wrench className={className} />;
+    case 'LineChart':
+      return <LineChart className={className} />;
     case 'FileSpreadsheet':
       return <FileSpreadsheet className={className} />;
+    case 'BookUser':
+      return <BookUser className={className} />;
     case 'Lightbulb':
       return <Lightbulb className={className} />;
     case 'Info':
