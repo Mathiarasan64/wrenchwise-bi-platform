@@ -166,16 +166,16 @@ export const ReportPreviewTable: React.FC<ReportPreviewTableProps> = ({
         />
       </div>
 
-      {/* Table with Sticky Header */}
-      <div className="overflow-x-auto max-h-[550px]">
-        <table className="ww-table">
+      {/* Table Container */}
+      <div className="overflow-x-auto custom-scrollbar relative w-full min-w-0">
+        <table className="w-full text-left border-separate border-spacing-0 text-xs">
           <thead>
-            <tr>
+            <tr className="bg-[#F8FAFC]">
               {visibleColumns.map((col) => (
                 <th
                   key={col}
                   onClick={() => handleSort(col)}
-                  className={`sortable ${
+                  className={`sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] cursor-pointer hover:bg-[#F1F5F9] transition-colors ${
                     col.toLowerCase().includes('value') ||
                     col.toLowerCase().includes('amount') ||
                     col.toLowerCase().includes('collected') ||

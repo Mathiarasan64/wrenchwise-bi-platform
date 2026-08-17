@@ -12,6 +12,7 @@ import {
   fetchOverallCollectionData,
   calculateOverallCollectionMetrics,
   filterOverallCollectionDataset,
+  resolveCurrentMonthName,
 } from '@/services/overallCollectionService';
 
 interface OverallCollectionContextType {
@@ -43,6 +44,7 @@ const initialFilters: OverallCollectionFilterState = {
   learnerStatus: 'All',
   paymentStatus: 'All',
   searchQuery: '',
+  collectionMonth: 'Current Month',
 };
 
 const OverallCollectionContext = createContext<OverallCollectionContextType | undefined>(undefined);
@@ -69,6 +71,26 @@ export const OverallCollectionProvider: React.FC<{ children: React.ReactNode }> 
         setDetectedMonths(res.detectedMonths);
         setValidationReport(res.validationReport);
         setLastSync(res.lastSync);
+
+        // Keep month selection active after refresh
+        const currentMonthName = resolveCurrentMonthName(res.detectedMonths);
+        setFilters((prev) => {
+          if (prev.collectionMonth === 'Current Month') {
+            setSelectedMonth(currentMonthName);
+          } else if (prev.collectionMonth === 'All Months') {
+            setSelectedMonth('Overall');
+          } else {
+            // If previous month selection exists in new detected months, keep it
+            const exists = res.detectedMonths.some((m) => m.name.toLowerCase() === prev.collectionMonth.toLowerCase());
+            if (exists) {
+              setSelectedMonth(prev.collectionMonth);
+            } else {
+              setSelectedMonth(currentMonthName);
+              return { ...prev, collectionMonth: 'Current Month' };
+            }
+          }
+          return prev;
+        });
       }
     } catch (err: any) {
       console.error('Overall Collection load error:', err);
@@ -82,18 +104,47 @@ export const OverallCollectionProvider: React.FC<{ children: React.ReactNode }> 
     loadData(false);
   }, [loadData]);
 
+  // Sync Month Tab when collectionMonth filter changes via dropdown
+  useEffect(() => {
+    if (filters.collectionMonth === 'All Months') {
+      setSelectedMonth('Overall');
+    } else if (filters.collectionMonth === 'Current Month') {
+      const currentMonthName = resolveCurrentMonthName(detectedMonths);
+      setSelectedMonth(currentMonthName);
+    } else {
+      setSelectedMonth(filters.collectionMonth);
+    }
+  }, [filters.collectionMonth, detectedMonths]);
+
+  // Handle Tab click from OverallCollectionMonthTabs: updates selectedMonth and syncs collectionMonth filter
+  const handleSetSelectedMonth = useCallback(
+    (month: string) => {
+      setSelectedMonth(month);
+      const currentMonthName = resolveCurrentMonthName(detectedMonths);
+      if (month === 'Overall') {
+        setFilters((prev) => ({ ...prev, collectionMonth: 'All Months' }));
+      } else if (month.toLowerCase().trim() === currentMonthName.toLowerCase().trim()) {
+        setFilters((prev) => ({ ...prev, collectionMonth: 'Current Month' }));
+      } else {
+        setFilters((prev) => ({ ...prev, collectionMonth: month }));
+      }
+    },
+    [detectedMonths]
+  );
+
   const setSearchQuery = useCallback((query: string) => {
     setFilters((prev) => ({ ...prev, searchQuery: query }));
   }, []);
 
   const resetFilters = useCallback(() => {
     setFilters(initialFilters);
-    setSelectedMonth('Overall');
-  }, []);
+    const currentMonthName = resolveCurrentMonthName(detectedMonths);
+    setSelectedMonth(currentMonthName);
+  }, [detectedMonths]);
 
   const filteredRecords = useMemo(() => {
-    return filterOverallCollectionDataset(records, filters);
-  }, [records, filters]);
+    return filterOverallCollectionDataset(records, filters, detectedMonths);
+  }, [records, filters, detectedMonths]);
 
   const metrics = useMemo(() => {
     return calculateOverallCollectionMetrics(filteredRecords, selectedMonth);
@@ -112,7 +163,7 @@ export const OverallCollectionProvider: React.FC<{ children: React.ReactNode }> 
         searchQuery: filters.searchQuery,
         setSearchQuery,
         selectedMonth,
-        setSelectedMonth,
+        setSelectedMonth: handleSetSelectedMonth,
         isLoading,
         error,
         lastSync,

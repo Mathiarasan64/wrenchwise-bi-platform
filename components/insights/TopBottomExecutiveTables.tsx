@@ -68,40 +68,40 @@ export const TopBottomExecutiveTables: React.FC<TopBottomExecutiveTablesProps> =
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="ww-table">
+          <div className="overflow-x-auto custom-scrollbar relative w-full min-w-0">
+            <table className="w-full text-left border-separate border-spacing-0 text-xs">
               <thead>
-                <tr>
-                  <th className="text-center">Rank</th>
-                  <th>Sales Executive</th>
-                  <th className="text-right">Revenue</th>
-                  <th className="text-right">Collection %</th>
-                  <th className="text-center">Score</th>
+                <tr className="bg-[#F8FAFC]">
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center">Rank</th>
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">Sales Executive</th>
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right">Revenue</th>
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right">Collection %</th>
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center">Score</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-[#E5E7EB]">
                 {top5.map((exec, idx) => (
                   <tr
                     key={exec.name}
                     onClick={() => onSelectExecutive && onSelectExecutive(exec.name)}
-                    className="cursor-pointer"
+                    className="hover:bg-[#F8FAFC] transition-colors cursor-pointer"
                   >
-                    <td className="text-center font-mono font-bold text-[#08C565]">
+                    <td className="py-3 px-4 border-b border-[#E5E7EB] text-center font-mono font-bold text-[#08C565]">
                       #{idx + 1}
                     </td>
-                    <td className="font-semibold text-[#111827] whitespace-nowrap">
+                    <td className="py-3 px-4 border-b border-[#E5E7EB] font-semibold text-[#111827] whitespace-nowrap">
                       <div className="flex items-center gap-1.5">
                         <UserCheck className="w-4 h-4 text-[#08C565]" />
                         <span>{exec.name}</span>
                       </div>
                     </td>
-                    <td className="text-right font-mono font-bold text-[#0B9BC5]">
+                    <td className="py-3 px-4 border-b border-[#E5E7EB] text-right font-mono font-bold text-[#0B9BC5]">
                       {formatCurrency(exec.totalSalesValue)}
                     </td>
-                    <td className="text-right font-mono font-bold text-[#08C565]">
+                    <td className="py-3 px-4 border-b border-[#E5E7EB] text-right font-mono font-bold text-[#08C565]">
                       {formatPercent(exec.collectionPercentage)}
                     </td>
-                    <td className="text-center">
+                    <td className="py-3 px-4 border-b border-[#E5E7EB] text-center">
                       <span className={getBadgeClass(exec.healthCategory)}>
                         {exec.healthScore}
                       </span>
@@ -127,15 +127,15 @@ export const TopBottomExecutiveTables: React.FC<TopBottomExecutiveTablesProps> =
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="ww-table">
+          <div className="overflow-x-auto custom-scrollbar relative w-full min-w-0">
+            <table className="w-full text-left border-separate border-spacing-0 text-xs">
               <thead>
-                <tr>
-                  <th className="text-center">Rank</th>
-                  <th>Sales Executive</th>
-                  <th className="text-right">Pending</th>
-                  <th className="text-right">Collection %</th>
-                  <th className="text-center">Score</th>
+                <tr className="bg-[#F8FAFC]">
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center">Rank</th>
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">Sales Executive</th>
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right">Pending</th>
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right">Collection %</th>
+                  <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center">Score</th>
                 </tr>
               </thead>
               <tbody>

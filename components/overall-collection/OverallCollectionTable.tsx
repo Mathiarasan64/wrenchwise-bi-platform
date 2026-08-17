@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 
 export const OverallCollectionTable: React.FC = () => {
-  const { filteredRecords, detectedMonths, selectedMonth } = useOverallCollectionData();
+  const { filteredRecords, detectedMonths, selectedMonth, filters } = useOverallCollectionData();
   const [selectedLearner, setSelectedLearner] = useState<OverallCollectionRecord | null>(null);
 
   const [sortField, setSortField] = useState<keyof OverallCollectionRecord>('studentName');
@@ -133,7 +133,11 @@ export const OverallCollectionTable: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <SectionHeader
           title={isMonthView ? `Learner Breakdown — ${selectedMonth}` : 'Overall Learner Collection Table'}
-          subtitle={`Showing ${filteredRecords.length} records matching active filters.`}
+          subtitle={
+            filters.collectionMonth && filters.collectionMonth !== 'All Months'
+              ? `Showing ${filteredRecords.length} learners with ${filters.collectionMonth === 'Current Month' ? selectedMonth : filters.collectionMonth} collection due.`
+              : `Showing ${filteredRecords.length} records matching active filters.`
+          }
           icon={<Table className="w-5 h-5 text-[#08C565]" />}
         />
 
@@ -151,14 +155,14 @@ export const OverallCollectionTable: React.FC = () => {
 
       {/* Table Container */}
       <div className="ww-card overflow-hidden border border-[#E5E7EB] bg-white rounded-2xl shadow-xs">
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-left border-collapse text-xs">
+        <div className="overflow-x-auto custom-scrollbar relative">
+          <table className="w-full text-left border-separate border-spacing-0 text-xs min-w-[760px]">
             <thead>
-              <tr className="bg-[#F8FAFC] border-b border-[#E5E7EB] text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">
+              <tr className="bg-[#F8FAFC] text-[11px] font-bold text-[#6B7280] uppercase tracking-wider">
                 {/* 1. Student Name */}
                 <th
                   onClick={() => handleSort('studentName')}
-                  className="py-3 px-4 cursor-pointer hover:bg-[#F1F5F9] transition-colors"
+                  className="py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] cursor-pointer hover:bg-[#F1F5F9] transition-colors max-w-[160px]"
                 >
                   <div className="flex items-center gap-1">
                     Student Name
@@ -169,7 +173,7 @@ export const OverallCollectionTable: React.FC = () => {
                 {/* 2. Sales Executive */}
                 <th
                   onClick={() => handleSort('salesExecutive')}
-                  className="py-3 px-4 cursor-pointer hover:bg-[#F1F5F9] transition-colors"
+                  className="py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] cursor-pointer hover:bg-[#F1F5F9] transition-colors max-w-[130px]"
                 >
                   <div className="flex items-center gap-1">
                     Sales Rep
@@ -178,15 +182,15 @@ export const OverallCollectionTable: React.FC = () => {
                 </th>
 
                 {/* 3. Contact Info */}
-                <th className="py-3 px-4">Contact</th>
+                <th className="py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] max-w-[160px]">Contact</th>
 
                 {/* 4. Course & Shift */}
-                <th className="py-3 px-4">Course & Shift</th>
+                <th className="py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] max-w-[150px]">Course & Shift</th>
 
                 {/* 5. Total Payable / EMI */}
                 <th
                   onClick={() => handleSort('totalPayableFee')}
-                  className="py-3 px-4 text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
+                  className="py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   <div className="flex items-center justify-end gap-1">
                     {isMonthView ? `Expected EMI (${selectedMonth})` : 'Total Payable'}
@@ -197,7 +201,7 @@ export const OverallCollectionTable: React.FC = () => {
                 {/* 6. Amount Collected / Paid */}
                 <th
                   onClick={() => handleSort('amountCollected')}
-                  className="py-3 px-4 text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
+                  className="py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   <div className="flex items-center justify-end gap-1">
                     {isMonthView ? `Paid (${selectedMonth})` : 'Collected'}
@@ -208,7 +212,7 @@ export const OverallCollectionTable: React.FC = () => {
                 {/* 7. Pending */}
                 <th
                   onClick={() => handleSort('pendingCollection')}
-                  className="py-3 px-4 text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
+                  className="py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   <div className="flex items-center justify-end gap-1">
                     {isMonthView ? `Pending EMI (${selectedMonth})` : 'Pending'}
@@ -217,12 +221,14 @@ export const OverallCollectionTable: React.FC = () => {
                 </th>
 
                 {/* 8. Status */}
-                <th className="py-3 px-4 text-center">
+                <th className="py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center">
                   {isMonthView ? `Status (${selectedMonth})` : 'Status'}
                 </th>
 
-                {/* 9. Direct Action Button */}
-                <th className="py-3 px-4 text-center">Action</th>
+                {/* 9. Action Header */}
+                <th className="py-3 px-3 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center w-16 min-w-[64px]">
+                  Action
+                </th>
               </tr>
             </thead>
 
@@ -257,56 +263,54 @@ export const OverallCollectionTable: React.FC = () => {
                     paymentUrl = latestData?.paymentLink || '';
                   }
 
-                  const rowKey = `${r.id}-${selectedMonth}-tbl`;
-
                   return (
                     <tr
                       key={r.id}
                       onClick={() => setSelectedLearner(r)}
-                      className="hover:bg-[#F8FAFC] transition-colors cursor-pointer"
+                      className="group hover:bg-[#F8FAFC] transition-colors cursor-pointer"
                     >
                       {/* Student Name */}
-                      <td className="py-3 px-4 font-semibold text-[#111827]">
-                        <div>{r.studentName}</div>
-                        <div className="text-[10px] text-[#6B7280] font-normal">
+                      <td className="py-3 px-4 border-b border-[#E5E7EB] font-semibold text-[#111827] max-w-[160px]">
+                        <div className="truncate" title={r.studentName}>{r.studentName}</div>
+                        <div className="text-[10px] text-[#6B7280] font-normal truncate">
                           {r.enrolledMonth} • {r.paymentType}
                         </div>
                       </td>
 
                       {/* Sales Executive */}
-                      <td className="py-3 px-4 font-medium text-[#374151]">
+                      <td className="py-3 px-4 border-b border-[#E5E7EB] font-medium text-[#374151] max-w-[130px] truncate" title={r.salesExecutive}>
                         {r.salesExecutive}
                       </td>
 
                       {/* Contact Info */}
-                      <td className="py-3 px-4 text-[#4B5563]">
-                        <div className="text-[11px] font-mono select-all">{r.email || '—'}</div>
-                        <div className="text-[10px] font-mono text-[#6B7280] select-all">{r.phone || '—'}</div>
+                      <td className="py-3 px-4 border-b border-[#E5E7EB] text-[#4B5563] max-w-[160px]">
+                        <div className="text-[11px] font-mono select-all truncate" title={r.email}>{r.email || '—'}</div>
+                        <div className="text-[10px] font-mono text-[#6B7280] select-all truncate">{r.phone || '—'}</div>
                       </td>
 
                       {/* Course & Shift */}
-                      <td className="py-3 px-4 text-[#374151]">
-                        <div className="font-semibold text-[11px]">{r.courseName}</div>
-                        <div className="text-[10px] text-[#6B7280]">{r.shift}</div>
+                      <td className="py-3 px-4 border-b border-[#E5E7EB] text-[#374151] max-w-[150px]">
+                        <div className="font-semibold text-[11px] truncate" title={r.courseName}>{r.courseName}</div>
+                        <div className="text-[10px] text-[#6B7280] truncate">{r.shift}</div>
                       </td>
 
                       {/* Payable Fee / Expected EMI */}
-                      <td className="py-3 px-4 text-right font-mono font-semibold text-[#111827]">
+                      <td className="py-3 px-4 border-b border-[#E5E7EB] text-right font-mono font-semibold text-[#111827] whitespace-nowrap">
                         {expectedEmiDisplay}
                       </td>
 
                       {/* Amount Collected / Paid Amount */}
-                      <td className="py-3 px-4 text-right font-mono font-bold text-[#08C565]">
+                      <td className="py-3 px-4 border-b border-[#E5E7EB] text-right font-mono font-bold text-[#08C565] whitespace-nowrap">
                         {paidDisplay}
                       </td>
 
                       {/* Pending Collection / Pending EMI */}
-                      <td className="py-3 px-4 text-right font-mono font-bold text-[#F59E0B]">
+                      <td className="py-3 px-4 border-b border-[#E5E7EB] text-right font-mono font-bold text-[#F59E0B] whitespace-nowrap">
                         {pendingDisplay}
                       </td>
 
                       {/* Status Badge */}
-                      <td className="py-3 px-4 text-center">
+                      <td className="py-3 px-4 border-b border-[#E5E7EB] text-center whitespace-nowrap">
                         <span
                           className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border inline-block ${
                             statusStr.toLowerCase() === 'active' || statusStr.toLowerCase() === 'paid' || statusStr.toLowerCase() === 'completed'
@@ -323,13 +327,13 @@ export const OverallCollectionTable: React.FC = () => {
                       </td>
 
                       {/* Direct Single-Click Action Button */}
-                      <td className="py-3 px-4 text-center">
+                      <td className="py-3 px-3 border-b border-[#E5E7EB] text-center w-16 min-w-[64px]">
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedLearner(r);
                           }}
-                          className="p-1.5 rounded-lg text-[#08C565] hover:bg-[#DCFCE7] transition-all"
+                          className="p-1.5 rounded-lg text-[#08C565] hover:bg-[#DCFCE7] transition-all inline-flex items-center justify-center"
                           title="View Learner Details"
                         >
                           <Eye className="w-4 h-4" />

@@ -56,32 +56,32 @@ export const LearnerStatusTable: React.FC = () => {
      *  - overflow-x-auto only on this table wrapper (mobile scrolls the table).
      */
     <div className="bg-white border border-[#E5E7EB] rounded-2xl shadow-xs overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[520px] text-sm">
+      <div className="overflow-x-auto custom-scrollbar relative">
+        <table className="w-full text-left border-separate border-spacing-0 text-xs min-w-[520px]">
           {/* ── Header ─────────────────────────────────────────────── */}
           <thead>
-            <tr className="bg-[#F8FAFC] border-b border-[#E5E7EB]">
+            <tr className="bg-[#F8FAFC]">
               <th
                 scope="col"
-                className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280] w-10"
+                className="sticky top-0 z-20 px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280] border-b border-[#E5E7EB] bg-[#F8FAFC] w-12"
               >
                 #
               </th>
               <th
                 scope="col"
-                className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280]"
+                className="sticky top-0 z-20 px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280] border-b border-[#E5E7EB] bg-[#F8FAFC]"
               >
                 Sales Executive
               </th>
               <th
                 scope="col"
-                className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280]"
+                className="sticky top-0 z-20 px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280] border-b border-[#E5E7EB] bg-[#F8FAFC]"
               >
                 Learner Name
               </th>
               <th
                 scope="col"
-                className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280]"
+                className="sticky top-0 z-20 px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-[#6B7280] border-b border-[#E5E7EB] bg-[#F8FAFC]"
               >
                 Learner Status
               </th>

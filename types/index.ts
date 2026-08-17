@@ -231,6 +231,8 @@ export interface OverallCollectionFilterState {
   learnerStatus: string;
   paymentStatus: string;
   searchQuery: string;
+  /** 'Current Month' | 'All Months' | specific month name e.g. 'August' */
+  collectionMonth: string;
 }
 
 export interface ValidationReportData {

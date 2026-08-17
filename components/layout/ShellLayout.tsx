@@ -22,7 +22,7 @@ export const ShellLayout: React.FC<{ children: React.ReactNode }> = ({ children 
             <Header onOpenMobileNav={() => setIsMobileNavOpen(true)} />
 
             {/* Main Body */}
-            <div className="flex-1 flex overflow-hidden max-w-full">
+            <div className="flex-1 flex overflow-hidden max-w-full w-full min-w-0">
               {/* Sidebar */}
               <Sidebar
                 isCollapsed={isSidebarCollapsed}
@@ -33,8 +33,8 @@ export const ShellLayout: React.FC<{ children: React.ReactNode }> = ({ children 
               <MobileNav isOpen={isMobileNavOpen} onClose={() => setIsMobileNavOpen(false)} />
 
               {/* Page Content Container */}
-              <main className="flex-1 overflow-y-auto p-3 sm:p-5 lg:p-6 flex flex-col min-w-0 overflow-x-hidden max-w-full">
-                <div className="w-full max-w-[1600px] mx-auto flex-1 flex flex-col min-w-0 overflow-x-hidden">{children}</div>
+              <main className="flex-1 min-w-0 w-full overflow-y-auto p-3 sm:p-5 lg:p-6 flex flex-col overflow-x-hidden">
+                <div className="w-full max-w-[1600px] mx-auto flex-1 flex flex-col min-w-0">{children}</div>
               </main>
             </div>
 

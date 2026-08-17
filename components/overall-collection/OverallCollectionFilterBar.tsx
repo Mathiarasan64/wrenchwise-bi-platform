@@ -2,10 +2,10 @@
 
 import React, { useMemo } from 'react';
 import { useOverallCollectionData } from '@/context/OverallCollectionContext';
-import { Search, Filter, RotateCcw } from 'lucide-react';
+import { Search, Filter, RotateCcw, Calendar } from 'lucide-react';
 
 export const OverallCollectionFilterBar: React.FC = () => {
-  const { records, filters, setFilters, searchQuery, setSearchQuery, resetFilters } =
+  const { records, detectedMonths, filters, setFilters, searchQuery, setSearchQuery, resetFilters } =
     useOverallCollectionData();
 
   // Extract unique options for filter dropdowns dynamically from data
@@ -50,6 +50,9 @@ export const OverallCollectionFilterBar: React.FC = () => {
     });
     const paymentStatuses = Array.from(paymentStatusesSet).sort();
 
+    // Collection month options: unique month names from detectedMonths
+    const collectionMonthNames = detectedMonths.map((m) => m.name);
+
     return {
       businessVerticals,
       salesExecutives,
@@ -59,8 +62,9 @@ export const OverallCollectionFilterBar: React.FC = () => {
       paymentTypes,
       learnerStatuses,
       paymentStatuses,
+      collectionMonthNames,
     };
-  }, [records]);
+  }, [records, detectedMonths]);
 
   const hasActiveFilters =
     filters.businessVertical !== 'All' ||
@@ -71,6 +75,8 @@ export const OverallCollectionFilterBar: React.FC = () => {
     filters.paymentType !== 'All' ||
     filters.learnerStatus !== 'All' ||
     filters.paymentStatus !== 'All' ||
+    // 'Current Month' is the default state — only flag active if user changed it
+    filters.collectionMonth !== 'Current Month' ||
     searchQuery.trim() !== '';
 
   return (
@@ -102,7 +108,28 @@ export const OverallCollectionFilterBar: React.FC = () => {
       </div>
 
       {/* Filter Dropdowns Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-2.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-9 gap-3">
+        {/* 0. Collection Month — NEW default filter */}
+        <div className="col-span-1">
+          <label className="block text-[11px] font-semibold text-[#374151] mb-1 flex items-center gap-1">
+            <Calendar className="w-3 h-3 text-[#08C565]" />
+            Collection Month
+          </label>
+          <select
+            value={filters.collectionMonth}
+            onChange={(e) => setFilters((p) => ({ ...p, collectionMonth: e.target.value }))}
+            className="w-full py-1.5 px-2.5 rounded-lg border border-[#08C565] bg-[#F0FDF4] text-[11px] text-[#065F46] font-semibold focus:outline-none focus:ring-1 focus:ring-[#08C565]"
+          >
+            <option value="Current Month">📅 Current Month</option>
+            <option value="All Months">All Months</option>
+            {options.collectionMonthNames.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* 1. Business Vertical */}
         <div>
           <label className="block text-[11px] font-semibold text-[#374151] mb-1">

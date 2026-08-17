@@ -142,87 +142,89 @@ export const OperationsWorkQueueTable: React.FC<OperationsWorkQueueTableProps> =
         />
       </div>
 
-      {/* Table with Sticky Header */}
-      <div className="overflow-x-auto max-h-[500px]">
-        <table className="ww-table">
+      {/* Table Container */}
+      <div className="overflow-x-auto custom-scrollbar relative w-full min-w-0 border border-[#E5E7EB] rounded-xl">
+        <table className="w-full text-left border-separate border-spacing-0 text-xs min-w-[800px]">
           <thead>
-            <tr>
-              <th className="cursor-pointer" onClick={() => handleSort('salesExecutive')}>
+            <tr className="bg-[#F8FAFC]">
+              <th className="py-3.5 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] font-semibold text-[#111827] cursor-pointer" onClick={() => handleSort('salesExecutive')}>
                 <div className="flex items-center gap-1">
-                  Sales Executive <ArrowUpDown className="w-3 h-3" />
+                  Sales Executive <ArrowUpDown className="w-3 h-3 text-[#9CA3AF]" />
                 </div>
               </th>
 
-              <th className="text-right cursor-pointer" onClick={() => handleSort('pendingAmount')}>
+              <th className="py-3.5 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] font-semibold text-[#111827] text-right cursor-pointer" onClick={() => handleSort('pendingAmount')}>
                 <div className="flex items-center justify-end gap-1">
-                  Pending (₹) <ArrowUpDown className="w-3 h-3" />
+                  Pending (₹) <ArrowUpDown className="w-3 h-3 text-[#9CA3AF]" />
                 </div>
               </th>
 
-              <th className="text-center cursor-pointer" onClick={() => handleSort('hold')}>
+              <th className="py-3.5 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] font-semibold text-[#111827] text-center cursor-pointer" onClick={() => handleSort('hold')}>
                 <div className="flex items-center justify-center gap-1">
-                  Hold <ArrowUpDown className="w-3 h-3" />
+                  Hold <ArrowUpDown className="w-3 h-3 text-[#9CA3AF]" />
                 </div>
               </th>
 
-              <th className="text-center cursor-pointer" onClick={() => handleSort('dropped')}>
+              <th className="py-3.5 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] font-semibold text-[#111827] text-center cursor-pointer" onClick={() => handleSort('dropped')}>
                 <div className="flex items-center justify-center gap-1">
-                  Dropped <ArrowUpDown className="w-3 h-3" />
+                  Dropped <ArrowUpDown className="w-3 h-3 text-[#9CA3AF]" />
                 </div>
               </th>
 
-              <th className="text-right cursor-pointer" onClick={() => handleSort('collectionPercentage')}>
+              <th className="py-3.5 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] font-semibold text-[#111827] text-right cursor-pointer" onClick={() => handleSort('collectionPercentage')}>
                 <div className="flex items-center justify-end gap-1">
-                  Collection % <ArrowUpDown className="w-3 h-3" />
+                  Collection % <ArrowUpDown className="w-3 h-3 text-[#9CA3AF]" />
                 </div>
               </th>
 
-              <th>Operations Observation</th>
+              <th className="py-3.5 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] font-semibold text-[#111827] max-w-xs">Operations Observation</th>
 
-              <th className="text-center cursor-pointer" onClick={() => handleSort('priority')}>
+              <th className="py-3.5 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] font-semibold text-[#111827] text-center cursor-pointer" onClick={() => handleSort('priority')}>
                 <div className="flex items-center justify-center gap-1">
-                  Priority <ArrowUpDown className="w-3 h-3" />
+                  Priority <ArrowUpDown className="w-3 h-3 text-[#9CA3AF]" />
                 </div>
               </th>
 
-              <th className="text-center">Status</th>
+              <th className="sticky right-0 z-20 py-3.5 px-4 border-b border-l border-[#E5E7EB] bg-[#F8FAFC] font-semibold text-[#111827] text-center w-40 min-w-[160px] shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)] whitespace-nowrap">
+                Action Required
+              </th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-[#E5E7EB] text-[#111827]">
             {paginated.map((row) => (
               <tr
                 key={row.id}
                 onClick={() => onSelectExecutive && onSelectExecutive(row.salesExecutive)}
-                className="cursor-pointer"
+                className="group hover:bg-[#F8FAFC] transition-colors cursor-pointer"
               >
-                <td className="font-bold text-[#111827] whitespace-nowrap">
+                <td className="py-3 px-4 border-b border-[#E5E7EB] font-bold text-[#111827] whitespace-nowrap">
                   <div className="flex items-center gap-2">
                     <UserCheck className="w-4 h-4 text-[#08C565]" />
                     <span>{row.salesExecutive}</span>
                   </div>
                 </td>
 
-                <td className="text-right font-mono font-bold text-[#F59E0B] whitespace-nowrap">
+                <td className="py-3 px-4 border-b border-[#E5E7EB] text-right font-mono font-bold text-[#F59E0B] whitespace-nowrap">
                   {formatCurrency(row.pendingAmount)}
                 </td>
 
-                <td className="text-center font-mono font-bold text-[#111827]">
+                <td className="py-3 px-4 border-b border-[#E5E7EB] text-center font-mono font-bold text-[#111827]">
                   {row.hold}
                 </td>
 
-                <td className="text-center font-mono font-bold text-[#DC2626]">
+                <td className="py-3 px-4 border-b border-[#E5E7EB] text-center font-mono font-bold text-[#DC2626]">
                   {row.dropped}
                 </td>
 
-                <td className="text-right font-mono font-bold text-[#0B9BC5]">
+                <td className="py-3 px-4 border-b border-[#E5E7EB] text-right font-mono font-bold text-[#0B9BC5]">
                   {formatPercent(row.collectionPercentage)}
                 </td>
 
-                <td className="text-[#374151] text-xs max-w-xs truncate" title={row.operationsObservation}>
+                <td className="py-3 px-4 border-b border-[#E5E7EB] text-[#374151] text-xs max-w-xs truncate" title={row.operationsObservation}>
                   {row.operationsObservation}
                 </td>
 
-                <td className="text-center">
+                <td className="py-3 px-4 border-b border-[#E5E7EB] text-center">
                   <span
                     className={
                       row.priority === 'High'
@@ -236,13 +238,13 @@ export const OperationsWorkQueueTable: React.FC<OperationsWorkQueueTableProps> =
                   </span>
                 </td>
 
-                <td className="text-center">
+                <td className="sticky right-0 z-10 py-3 px-4 border-b border-l border-[#E5E7EB] bg-white group-hover:bg-[#F8FAFC] text-center w-40 min-w-[160px] shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.06)]">
                   <span
-                    className={
+                    className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
                       row.status === 'Action Required'
-                        ? 'badge-danger'
-                        : 'badge-success'
-                    }
+                        ? 'bg-[#FEE2E2] text-[#991B1B] border border-red-200'
+                        : 'bg-[#DCFCE7] text-[#166534] border border-emerald-200'
+                    }`}
                   >
                     {row.status}
                   </span>

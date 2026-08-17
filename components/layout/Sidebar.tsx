@@ -110,7 +110,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed = false, onToggleC
 
   return (
     <aside
-      className={`hidden lg:flex flex-col border-r border-[#E5E7EB] bg-white transition-all duration-300 relative z-20 ${
+      className={`hidden lg:flex flex-col border-r border-[#E5E7EB] bg-white transition-all duration-300 relative z-20 shrink-0 ${
         isCollapsed ? 'w-[72px]' : 'w-60'
       }`}
     >

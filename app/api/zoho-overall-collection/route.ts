@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 const DEFAULT_COLLECTION_URL =
   'https://sheet.zohopublic.in/sheet/publishedsheet/4d5f2c36dda0f43d7fd37f957be0a9476f723df7622d8be747ebb4ceadae9568?type=grid&download=csv';
 

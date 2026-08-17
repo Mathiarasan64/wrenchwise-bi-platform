@@ -42,24 +42,24 @@ export const DataPreviewTable: React.FC = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="ww-table">
+      <div className="overflow-x-auto custom-scrollbar relative w-full min-w-0">
+        <table className="w-full text-left border-separate border-spacing-0 text-xs">
           <thead>
-            <tr>
-              <th>Deal ID</th>
-              <th>Date</th>
-              <th>Sales Executive</th>
-              <th>Customer Name</th>
-              <th>Course Program</th>
-              <th className="text-right">Amount (₹)</th>
-              <th>Region</th>
-              <th className="text-center">Status</th>
+            <tr className="bg-[#F8FAFC]">
+              <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">ID</th>
+              <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">Date</th>
+              <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">Sales Executive</th>
+              <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">Customer Name</th>
+              <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">Course Program</th>
+              <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right">Amount (₹)</th>
+              <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC]">Region</th>
+              <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center">Status</th>
             </tr>
           </thead>
           <tbody>
             {paginatedRecords.map((record) => (
               <tr key={record.id}>
-                <td className="font-mono font-medium text-[#0B9BC5]">
+                <td className="font-mono font-medium text-[#0B9BC5] p-4 border-b border-[#F3F4F6]">
                   {record.id}
                 </td>
                 <td className="text-[#6B7280] whitespace-nowrap">

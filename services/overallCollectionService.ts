@@ -574,16 +574,59 @@ export function calculateOverallCollectionMetrics(
 }
 
 /**
+ * Resolve 'Current Month' to the system's current month name (e.g. 'August', 'September', 'October').
+ * Matches against detected month names from Zoho Collection Sheet in a case-insensitive way.
+ */
+export function resolveCurrentMonthName(detectedMonths: DetectedMonth[]): string {
+  if (!detectedMonths || detectedMonths.length === 0) {
+    const now = new Date();
+    return now.toLocaleString('en-US', { month: 'long' });
+  }
+
+  const now = new Date();
+  const systemMonthName = now.toLocaleString('en-US', { month: 'long' }); // e.g. 'August'
+  const systemMonthShort = now.toLocaleString('en-US', { month: 'short' }); // e.g. 'Aug'
+
+  // 1. Try exact or start match with current system month (e.g. 'August' or 'Aug')
+  const match = detectedMonths.find(
+    (m) =>
+      m.name.toLowerCase().startsWith(systemMonthName.toLowerCase()) ||
+      systemMonthName.toLowerCase().startsWith(m.name.toLowerCase()) ||
+      m.name.toLowerCase().startsWith(systemMonthShort.toLowerCase())
+  );
+
+  if (match) {
+    return match.name;
+  }
+
+  // 2. If current system month column doesn't exist in sheet yet, default to the latest month column in sheet
+  return detectedMonths[detectedMonths.length - 1].name;
+}
+
+/**
  * Filter Overall Collection dataset according to business rules:
  * - ALL (default): Display ONLY Active + Inactive (Exclude Closed)
  * - ACTIVE: Show only Active learners
  * - INACTIVE: Show only Inactive learners
  * - CLOSED: Show only Closed learners
+ * - collectionMonth: When set to 'Current Month' or a specific month, show only learners
+ *   who have an expected payment OR a recorded payment for that month.
  */
 export function filterOverallCollectionDataset(
   records: OverallCollectionRecord[],
-  filters: OverallCollectionFilterState
+  filters: OverallCollectionFilterState,
+  detectedMonths: DetectedMonth[] = []
 ): OverallCollectionRecord[] {
+  // Resolve which month to filter by for collection month logic
+  let targetCollectionMonth: string | null = null;
+  if (filters.collectionMonth && filters.collectionMonth !== 'All Months') {
+    if (filters.collectionMonth === 'Current Month') {
+      targetCollectionMonth = resolveCurrentMonthName(detectedMonths);
+    } else {
+      targetCollectionMonth = filters.collectionMonth;
+    }
+  }
+
   return records.filter((r) => {
     if (filters.businessVertical && filters.businessVertical !== 'All' && r.businessVertical !== filters.businessVertical) {
       return false;
@@ -622,6 +665,20 @@ export function filterOverallCollectionDataset(
       );
       if (!matchesStatus) return false;
     }
+
+    // Collection Month Filter: only include learners who have a payment/collection due for that month
+    if (targetCollectionMonth) {
+      const monthData = r.monthPayments[targetCollectionMonth];
+      // A learner has a collection due for this month if:
+      // 1. They have an expected EMI configured for this month (hasExpectedEmi && expectedEmi > 0), OR
+      // 2. They have a recorded payment amount for this month (hasAmount && amount > 0)
+      const hasExpectedPayment = monthData && monthData.hasExpectedEmi && (monthData.expectedEmi || 0) > 0;
+      const hasRecordedPayment = monthData && monthData.hasAmount && (monthData.amount || 0) > 0;
+      if (!hasExpectedPayment && !hasRecordedPayment) {
+        return false;
+      }
+    }
+
     if (filters.searchQuery && filters.searchQuery.trim() !== '') {
       const q = filters.searchQuery.toLowerCase().trim();
       const matches =

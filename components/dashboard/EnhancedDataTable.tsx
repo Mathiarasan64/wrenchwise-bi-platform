@@ -179,71 +179,71 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({ records, i
       {sortedRecords.length === 0 ? (
         <EmptyState title="No Records Found" description="Unable to find matching records." />
       ) : (
-        <div className="overflow-x-auto max-h-[550px]">
-          <table className="ww-table">
+        <div className="overflow-x-auto custom-scrollbar relative w-full min-w-0">
+          <table className="w-full text-left border-separate border-spacing-0 text-xs">
             <thead>
-              <tr>
+              <tr className="bg-[#F8FAFC]">
                 <th
                   onClick={() => handleSort('salesExecutive')}
-                  className="sortable"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   Sales Executive {renderSortIcon('salesExecutive')}
                 </th>
                 <th
                   onClick={() => handleSort('section')}
-                  className="sortable"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   MIS Section {renderSortIcon('section')}
                 </th>
                 <th
                   onClick={() => handleSort('totalLearners')}
-                  className="sortable text-center"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   Total {renderSortIcon('totalLearners')}
                 </th>
                 <th
                   onClick={() => handleSort('activeLearners')}
-                  className="sortable text-center"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   Active {renderSortIcon('activeLearners')}
                 </th>
                 <th
                   onClick={() => handleSort('hold')}
-                  className="sortable text-center"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   Hold {renderSortIcon('hold')}
                 </th>
                 <th
                   onClick={() => handleSort('dropped')}
-                  className="sortable text-center"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-center cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   Dropped {renderSortIcon('dropped')}
                 </th>
                 <th
                   onClick={() => handleSort('totalSalesValue')}
-                  className="sortable text-right"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   Total Sales (₹) {renderSortIcon('totalSalesValue')}
                 </th>
                 <th
                   onClick={() => handleSort('amountCollected')}
-                  className="sortable text-right"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   Collected (₹) {renderSortIcon('amountCollected')}
                 </th>
                 <th
                   onClick={() => handleSort('pendingAmount')}
-                  className="sortable text-right"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   Pending (₹) {renderSortIcon('pendingAmount')}
                 </th>
                 <th
                   onClick={() => handleSort('collectionPercentage')}
-                  className="sortable text-right"
+                  className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] text-right cursor-pointer hover:bg-[#F1F5F9] transition-colors"
                 >
                   Collection % {renderSortIcon('collectionPercentage')}
                 </th>
-                <th className="min-w-[220px]">Operations Observation</th>
+                <th className="sticky top-0 z-20 py-3 px-4 border-b border-[#E5E7EB] bg-[#F8FAFC] max-w-xs">Operations Observation</th>
               </tr>
             </thead>
             <tbody>
