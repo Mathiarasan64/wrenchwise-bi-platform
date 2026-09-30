@@ -84,26 +84,76 @@ export const OverallCollectionTable: React.FC = () => {
   };
 
   const handleExportCSV = () => {
-    const exportData = sortedRecords.map((r) => ({
-      'S.No': r.sNo,
-      'Student Name': r.studentName,
-      'Sales Executive': r.salesExecutive,
-      'Business Vertical': r.businessVertical,
-      Email: r.email,
-      Phone: r.phone,
-      Course: r.courseName,
-      Shift: r.shift,
-      'Enrolled Month': r.enrolledMonth,
-      'Payment Type': r.paymentType,
-      'Total Price': r.totalPrice,
-      Advance: r.advance,
-      'EMI Tenure': r.emiTenure,
-      'Total Payable Fee': r.totalPayableFee,
-      'Amount Collected': r.amountCollected,
-      'Pending Amount': r.totalPayableFee > 0 ? Math.max(0, r.totalPayableFee - r.amountCollected) : 0,
-      'Collection %': `${(r.totalPayableFee > 0 ? (r.amountCollected / r.totalPayableFee) * 100 : 0).toFixed(2)}%`,
-      Status: r.learnerStatus,
-    }));
+    const exportData = sortedRecords.map((r) => {
+      const isMonth = isMonthView && selectedMonth;
+      if (isMonth) {
+        const monthData = r.monthPayments[selectedMonth];
+        const expVal = monthData && monthData.hasExpectedEmi && monthData.expectedEmi > 0 ? monthData.expectedEmi : 0;
+        const paidVal = monthData && monthData.hasAmount ? monthData.amount : 0;
+        const pendingVal = monthData && monthData.hasExpectedEmi ? Math.max(0, expVal - paidVal) : 0;
+        const statusVal = monthData?.status || 'Not Updated';
+
+        return {
+          'S.No': r.sNo,
+          'Student Name': r.studentName,
+          'Sales Executive': r.salesExecutive,
+          'Business Vertical': r.businessVertical,
+          Email: r.email,
+          Phone: r.phone,
+          Course: r.courseName,
+          Shift: r.shift,
+          'Enrolled Month': r.enrolledMonth,
+          'Payment Type': r.paymentType,
+          'Total Price': r.totalPrice,
+          Advance: r.advance,
+          'EMI Tenure': r.emiTenure,
+          [`Expected EMI (${selectedMonth})`]: expVal,
+          [`Paid (${selectedMonth})`]: paidVal,
+          [`Pending EMI (${selectedMonth})`]: pendingVal,
+          [`Status (${selectedMonth})`]: statusVal,
+          [`Payment Link (${selectedMonth})`]: monthData?.paymentLink || '',
+        };
+      }
+
+      const calcPending = r.totalPayableFee > 0 ? Math.max(0, r.totalPayableFee - r.amountCollected) : 0;
+      const collPct = r.totalPayableFee > 0 ? (r.amountCollected / r.totalPayableFee) * 100 : 0;
+
+      const baseObj: Record<string, any> = {
+        'S.No': r.sNo,
+        'Student Name': r.studentName,
+        'Sales Executive': r.salesExecutive,
+        'Business Vertical': r.businessVertical,
+        Email: r.email,
+        Phone: r.phone,
+        Course: r.courseName,
+        Shift: r.shift,
+        'Enrolled Month': r.enrolledMonth,
+        'Payment Type': r.paymentType,
+        'Total Price': r.totalPrice,
+        Advance: r.advance,
+        'EMI Tenure': r.emiTenure,
+        'Total Payable Fee': r.totalPayableFee,
+        'Amount Collected': r.amountCollected,
+        'Pending Amount': calcPending,
+        'Collection %': `${collPct.toFixed(2)}%`,
+        Status: r.learnerStatus,
+      };
+
+      detectedMonths.forEach((m) => {
+        const monthData = r.monthPayments[m.name];
+        const expVal = monthData && monthData.hasExpectedEmi && monthData.expectedEmi > 0 ? monthData.expectedEmi : 0;
+        const paidVal = monthData && monthData.hasAmount ? monthData.amount : 0;
+        const pendingVal = monthData && monthData.hasExpectedEmi ? Math.max(0, expVal - paidVal) : 0;
+        const statusVal = monthData?.status || 'Not Updated';
+
+        baseObj[`Expected EMI (${m.name})`] = expVal;
+        baseObj[`Paid (${m.name})`] = paidVal;
+        baseObj[`Pending EMI (${m.name})`] = pendingVal;
+        baseObj[`Status (${m.name})`] = statusVal;
+      });
+
+      return baseObj;
+    });
 
     const csv = Papa.unparse(exportData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
