@@ -181,8 +181,15 @@ export function calculateCentralizedMetrics(
     (sum, r) => sum + safeParseNumber(r.amountCollected),
     0
   );
-  // Derived KPI rule: Pending Amount = Active Sales Value - Amount Collected
-  const pendingAmount = Math.max(0, activeSalesValue - amountCollected);
+  // Pending Amount: Sum of row-level pending balances, matching export calculation logic
+  const pendingAmount = activeRecords.reduce(
+    (sum, r) =>
+      sum +
+      (r.pendingAmount !== undefined
+        ? safeParseNumber(r.pendingAmount)
+        : Math.max(0, safeParseNumber(r.activeSalesValue) - safeParseNumber(r.amountCollected))),
+    0
+  );
 
   const collectionPercentage =
     totalSalesValue > 0 ? (amountCollected / totalSalesValue) * 100 : 0;
@@ -272,6 +279,10 @@ export function calculateCentralizedMetrics(
     item.collectedAmount += safeParseNumber(r.amountCollected);
     item.droppedValue += safeParseNumber(r.droppedValue);
     item.activeRevenue += safeParseNumber(r.activeSalesValue);
+    item.pendingAmount +=
+      r.pendingAmount !== undefined
+        ? safeParseNumber(r.pendingAmount)
+        : Math.max(0, safeParseNumber(r.activeSalesValue) - safeParseNumber(r.amountCollected));
 
     item.totalLearners += safeParseNumber(r.totalLearners);
     item.activeLearners += safeParseNumber(r.activeLearners);
@@ -290,8 +301,7 @@ export function calculateCentralizedMetrics(
   });
 
   const executives = Object.values(execMap).map((item) => {
-    // Derived executive pending amount = Active Revenue - Collected Amount
-    item.pendingAmount = Math.max(0, item.activeRevenue - item.collectedAmount);
+    // Derived executive pending amount is accumulated from row-level pending balances
     item.collectionPercentage =
       item.contractedSales > 0 ? (item.collectedAmount / item.contractedSales) * 100 : 0;
     item.conversionRate =
@@ -424,7 +434,14 @@ export function validateCalculations(records: ZohoRecord[]): {
   const rawActiveSalesValue = records.reduce((s, r) => s + safeParseNumber(r.activeSalesValue), 0);
   const rawDroppedValue = records.reduce((s, r) => s + safeParseNumber(r.droppedValue), 0);
   const rawAmountCollected = records.reduce((s, r) => s + safeParseNumber(r.amountCollected), 0);
-  const rawPendingAmount = Math.max(0, rawActiveSalesValue - rawAmountCollected);
+  const rawPendingAmount = records.reduce(
+    (s, r) =>
+      s +
+      (r.pendingAmount !== undefined
+        ? safeParseNumber(r.pendingAmount)
+        : Math.max(0, safeParseNumber(r.activeSalesValue) - safeParseNumber(r.amountCollected))),
+    0
+  );
   const rawCollectionPct = rawTotalSalesValue > 0 ? (rawAmountCollected / rawTotalSalesValue) * 100 : 0;
 
   const compare = (kpiName: string, rawVal: number, appVal: number): KPIValidationItem => {
