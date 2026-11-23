@@ -144,8 +144,21 @@ export function parseZohoSheetRows(rows: string[][]): {
       getVal(['amount collected', 'collected amount', 'collected'])
     );
 
-    // Business Rule derived KPI: Pending Amount = Active Sales Value - Amount Collected
-    const pendingAmount = Math.max(0, activeSalesValue - amountCollected);
+    // Dynamic row-level Pending Amount from sheet with fallback to Active Sales Value - Amount Collected
+    const rawPendingVal = getVal([
+      'pending amount',
+      'pending balance',
+      'pending',
+      'outstanding amount',
+      'receivables',
+    ]);
+    const pendingAmount =
+      rawPendingVal !== '' &&
+      rawPendingVal !== '-' &&
+      rawPendingVal.toLowerCase() !== 'null' &&
+      rawPendingVal.toLowerCase() !== 'undefined'
+        ? parseNumber(rawPendingVal)
+        : Math.max(0, activeSalesValue - amountCollected);
 
     const rawCollectionPct = parseNumber(
       getVal([
