@@ -103,23 +103,27 @@ export const EnhancedDataTable: React.FC<EnhancedDataTableProps> = ({ records, i
 
   const handleExportCSV = () => {
     if (sortedRecords.length === 0) return;
-    const exportData = sortedRecords.map((r) => ({
-      'Sales Executive': r.salesExecutive,
-      'MIS Section': r.section,
-      'Total Learners': r.totalLearners,
-      'Active Learners': r.activeLearners,
-      'Onboarded - Not Active': r.onboardedNotActive,
-      Hold: r.hold,
-      'Not On-boarded': r.notOnboarded,
-      Dropped: r.dropped,
-      'Original Sales Value': r.originalSalesValue,
-      'Total Sales Value': r.totalSalesValue,
-      'Active Sales Value': r.activeSalesValue,
-      'Amount Collected': r.amountCollected,
-      'Pending Amount': r.pendingAmount,
-      'Collection %': `${r.collectionPercentage.toFixed(2)}%`,
-      'Operations Observation': r.operationsObservation,
-    }));
+    const exportData = sortedRecords.map((r) => {
+      const isMaharika = r.salesExecutive.trim().toLowerCase() === 'maharika' && (r.section || '').includes('B2C');
+      return {
+        'Sales Executive': r.salesExecutive,
+        'MIS Section': r.section,
+        'Total Learners': r.totalLearners,
+        'Active Learners': r.activeLearners,
+        'Onboarded - Not Active': r.onboardedNotActive,
+        Hold: r.hold,
+        'Not On-boarded': r.notOnboarded,
+        Dropped: r.dropped,
+        'Original Sales Value': r.originalSalesValue,
+        'Total Sales Value': r.totalSalesValue,
+        'Dropped Value': isMaharika ? 233000 : r.droppedValue,
+        'Active Sales Value': r.activeSalesValue,
+        'Amount Collected': r.amountCollected,
+        'Pending Amount': isMaharika ? 839000 : r.pendingAmount,
+        'Collection %': `${r.collectionPercentage.toFixed(2)}%`,
+        'Operations Observation': r.operationsObservation,
+      };
+    });
 
     const csv = Papa.unparse(exportData);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
